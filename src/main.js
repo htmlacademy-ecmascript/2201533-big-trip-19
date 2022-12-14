@@ -1,4 +1,6 @@
 console.log('main.js');
-import RandomString from './random-string.js';
+import Rest from './rest.js';
 
-console.log(new RandomString().get());
+const rest = new Rest();
+
+
