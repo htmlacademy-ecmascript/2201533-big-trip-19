@@ -3,12 +3,13 @@ export default class Rest{
   #BASE_URL = 'https://19.ecmascript.pages.academy/big-trip/';
   #endpoints = {
     points: 'points',
-    destinations: 'destinations:',
-    offers: 'offers:'
+    destinations: 'destinations',
+    offers: 'offers'
   };
   #randomString;
   #get = (endpoint, onSuccess, onError)=>{
     const url = `${this.#BASE_URL}${endpoint}`;
+    console.log(url);
     fetch(url,{
       method: 'GET',
       headers: {
@@ -40,6 +41,6 @@ export default class Rest{
   };
 
   constructor() {
-    this.#randomString = new RandomString();
+    this.#randomString = new RandomString().get();
   };
 }
