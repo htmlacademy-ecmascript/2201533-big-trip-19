@@ -1,26 +1,35 @@
+import ListPoints from './view/list-points';
+
 console.log('main.js');
+const dayjs = require('dayjs');
+const duration = require('dayjs/plugin/duration');
+dayjs.extend(duration);
 import Rest from './rest.js';
 import Model from './model.js';
 import Sorting from './view/sorting.js';
 import Filters from './view/filters.js';
-import {render} from './render.js';
+import Info from './view/info.js';
+import {render, RenderPosition} from './render.js';
 const rest = new Rest();
 const model = new Model(rest);
 
-model.init();
+model.init(()=>{
+  if (model.points().length > 0){
+    const list = new ListPoints(model);
+    render(list, sortContainer);
+  }
+});
 
 const sort = new Sorting()
 const filter = new Filters();
-
-console.log(filter);
+const info = new Info();
 
 const sortContainer = document.querySelector('.trip-events');
 render(sort, sortContainer);
 const filterContainer = document.querySelector('.trip-controls__filters');
 render(filter, filterContainer);
-
-console.log(sort.getElement());
-
+const infoContainer = document.querySelector('.trip-main');
+render(info, infoContainer, RenderPosition.AFTERBEGIN);
 
 //rest.GET.destinations(console.log, console.log);
 

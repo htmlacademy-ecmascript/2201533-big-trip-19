@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 
 
 class Picture{
@@ -42,22 +43,33 @@ export default class Model{
   #destinations = [];
   #typeOfOffers = {};
   #rest;
+  #onLoad;
+  #loaded = {
+    points: false,
+    destinations: false,
+    offers: false,
+    check: ()=>this.#loaded.points && this.#loaded.destinations && this.#loaded.offers
+  }
   #load = {
     points: (json)=>{
       json.forEach(point=>{
         this.#points.push(
           new Point(
             point.base_price,
-            new Date(point.date_from),
-            new Date(point.date_to),
-            point.destinations,
+            dayjs(point.date_from),
+            dayjs(point.date_to),
+            point.destination,
             parseInt(point.id, 10),
             point.is_favorite,
             point.offers,
             point.type
           )
         )
-      })
+      });
+      this.#loaded.points = true;
+      if (this.#loaded.check()){
+        this.#onLoad();
+      }
     },
     destinations: (json)=>{
       json.forEach(destination=>{
@@ -70,19 +82,31 @@ export default class Model{
           )
         )
       })
+      this.#loaded.destinations = true;
+      if (this.#loaded.check()){
+        this.#onLoad();
+      }
     },
     offers: (json)=>{
       json.forEach(type=>{
         this.#typeOfOffers[type.type] =
           Array.from(type.offers, offer=>{return new Offer(offer.id, offer.title, offer.price)})
-      })
+      });
+      this.#loaded.offers = true;
+      if (this.#loaded.check()){
+        this.#onLoad();
+      }
     }
-  }
-  init = ()=>{
+  };
+  init = (onLoad)=>{
+    this.#onLoad = onLoad;
     this.#rest.GET.points(this.#load.points, console.log);
     this.#rest.GET.destinations(this.#load.destinations, console.log);
     this.#rest.GET.offers(this.#load.offers, console.log);
-  }
+  };
+  points = ()=>{return this.#points};
+  types = ()=>Object.keys(this.#typeOfOffers);
+  getDestination = (id)=>this.#destinations.find(element=>element.id === id);
   constructor(rest) {
     this.#rest = rest;
   }

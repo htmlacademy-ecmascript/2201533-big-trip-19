@@ -28,7 +28,6 @@ class FilterItem{
   #TEMPL = '<div class="trip-filters__filter"></div>';
   #element;
   constructor(item) {
-    console.log(item);
     this.#element = createElement(this.#TEMPL);
     const id = `${this.#ID_PREF}${item.name}`;
     this.#element = createElement(this.#TEMPL);

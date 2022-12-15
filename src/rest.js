@@ -9,7 +9,6 @@ export default class Rest{
   #randomString;
   #get = (endpoint, onSuccess, onError)=>{
     const url = `${this.#BASE_URL}${endpoint}`;
-    console.log(url);
     fetch(url,{
       method: 'GET',
       headers: {
