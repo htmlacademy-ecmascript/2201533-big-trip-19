@@ -105,9 +105,20 @@ export default class Model{
     this.#rest.GET.offers(this.#load.offers, console.log);
   };
   points = ()=>{return this.#points};
+  destinations = ()=>this.#destinations;
   types = ()=>Object.keys(this.#typeOfOffers);
+  getOffers = (type, offers)=>Array.from(offers,id=>this.#typeOfOffers[type].find(element=>element.id === id));
   getDestination = (id)=>this.#destinations.find(element=>element.id === id);
+  getPoint = (id)=>this.#points.find(element=>element.id === id);
   constructor(rest) {
     this.#rest = rest;
+  };
+  getRoutesInfo = ()=>{
+    return {
+      route: ``,
+      price: 0,
+      start: dayjs(),
+      finish: dayjs()
+    };
   }
 }
