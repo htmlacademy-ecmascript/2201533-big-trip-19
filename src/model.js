@@ -9,7 +9,7 @@ class Picture{
 }
 
 class Destination{
-  constructor(id, description, name, pictures) {
+  constructor(id = null, description = '', name = '', pictures = []) {
     this.id = id;
     this.description = description;
     this.name = name;
@@ -26,7 +26,15 @@ class Offer{
 }
 
 class Point{
-  constructor(basePrice, dateFrom, dateTo, destination, id, isFavorite, offers, type) {
+  constructor(
+    basePrice = 0,
+    dateFrom = dayjs(),
+    dateTo = dayjs(),
+    destination = null,
+    id = null,
+    isFavorite = false,
+    offers = [],
+    type = '') {
     this.basePrice = basePrice;
     this.dateFrom = dateFrom;
     this.dateTo = dateTo;
@@ -106,10 +114,11 @@ export default class Model{
   };
   points = ()=>{return this.#points};
   destinations = ()=>this.#destinations;
+  typeOfOffers = ()=>this.#typeOfOffers;
   types = ()=>Object.keys(this.#typeOfOffers);
   getOffers = (type, offers)=>Array.from(offers,id=>this.#typeOfOffers[type].find(element=>element.id === id));
-  getDestination = (id)=>this.#destinations.find(element=>element.id === id);
-  getPoint = (id)=>this.#points.find(element=>element.id === id);
+  getDestination = (id)=>id ? this.#destinations.find(element=>element.id === id) : new Destination();
+  getPoint = (id)=>id ? this.#points.find(element=>element.id === id) : new Point();
   constructor(rest) {
     this.#rest = rest;
   };

@@ -16,17 +16,44 @@ export default class ListPoints{
   #TEMPL = '<ul class="trip-events__list"></ul>';
   #element;
   #model;
+  newEvent = ()=>{
+    console.log('Add event');
+    const point = this.#model.getPoint(null);
+    console.log(point);
+    const elem = new EditFormView(
+        point,
+        this.#model.types(),
+        this.#model.getDestination(point.destination),
+        this.#model.destinations(),
+        this.#model.typeOfOffers(),
+      null,
+      ).getElement();
+      this.#element.prepend(elem);
+  };
   #onRollup = {
     form: (id, element)=>{
+      const point = this.#model.getPoint(id);
       const elem = new EditFormView(
-        this.#model.getPoint(id),
+        point,
         this.#model.types(),
-        this.#model.destinations()
-      )
-      console.log(`${id}: ${element.tagName}`);
+        this.#model.getDestination(point.destination),
+        this.#model.destinations(),
+        this.#model.typeOfOffers(),
+        this.#onRollup.point
+      ).getElement();
+      element.replaceWith(elem);
     },
     point: (id, element)=>{
-
+      const point = this.#model.getPoint(id);
+      console.log(id);
+      console.log(point);
+      const elem = new RoutePoint(
+        point,
+        this.#model.getDestination(point.destination).name,
+        point.offers.length > 0 ? this.#model.getOffers(point.type, point.offers): false,
+        this.#onRollup.form
+      ).getElement();
+      element.replaceWith(elem);
     }
   };
   constructor(model) {

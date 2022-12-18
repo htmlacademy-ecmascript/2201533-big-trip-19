@@ -17,6 +17,7 @@ model.init(()=>{
   if (model.points().length > 0){
     const list = new ListPoints(model);
     render(list, sortContainer);
+    eventAddButton.addEventListener('click', ()=>{list.newEvent()});
   }
 });
 
@@ -30,6 +31,9 @@ const filterContainer = document.querySelector('.trip-controls__filters');
 render(filter, filterContainer);
 const infoContainer = document.querySelector('.trip-main');
 render(info, infoContainer, RenderPosition.AFTERBEGIN);
+const eventAddButton = document.querySelector('.trip-main__event-add-btn');
+
+
 
 //rest.GET.destinations(console.log, console.log);
 
