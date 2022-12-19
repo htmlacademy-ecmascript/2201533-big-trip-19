@@ -174,7 +174,7 @@ export default class EditFormView{
   #createOffers = ()=>{
     const pointOffers = this.#point.offers;
     const typeOffers = this.#offers[this.#point.type];
-    const id = this.#point.id;
+    const id = this.#id;
     const offersTemplate =
     `<section class="event__section  event__section--offers">
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
@@ -199,7 +199,7 @@ export default class EditFormView{
     `<section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
         <p class="event__destination-description">${this.#destination.description}</p>
-        ${!this.#point.id ?
+        ${!this.#id ?
         `<div class="event__photos-container">
             <div class="event__photos-tape">
               ${Array.from(this.#destination.pictures, (elem)=>
@@ -212,10 +212,12 @@ export default class EditFormView{
   };
   constructor(point, types, destination, destinations, offers, onRollup) {
     this.#point = point;
-    this.#id = point.id;
+    this.#id = point.id === -1 ? '' : `-${point.id}`;
     this.#destination = destination;
     this.#offers = offers;
-    const id = !point.id ? '' : point.id;
+    console.log(this.#point);
+
+    const id = this.#id;
     const typeTitle = type=>type ? `${type[0].toUpperCase()}${type.slice(1)}` : '';
     const headerTemplate =
     `<header class="event__header">
@@ -280,7 +282,7 @@ export default class EditFormView{
 
 
     this.#onRollup = ()=>{
-      onRollup(this.#id, this.#element)
+      onRollup(this.#point.id, this.#element)
     };
 
     this.#header = createElement(headerTemplate);

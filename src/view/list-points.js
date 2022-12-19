@@ -16,10 +16,15 @@ export default class ListPoints{
   #TEMPL = '<ul class="trip-events__list"></ul>';
   #element;
   #model;
+  #currentForm = {
+    id: -1,
+    element: null
+  };
   newEvent = ()=>{
-    console.log('Add event');
-    const point = this.#model.getPoint(null);
-    console.log(point);
+    if (this.#currentForm.id > -1){
+      this.#onRollup.point(this.#currentForm.id, this.#currentForm.element);
+    }
+    const point = this.#model.getPoint(-1);
     const elem = new EditFormView(
         point,
         this.#model.types(),
@@ -29,9 +34,19 @@ export default class ListPoints{
       null,
       ).getElement();
       this.#element.prepend(elem);
+    this.#currentForm.id = -1;
+    this.#currentForm.element = elem;
   };
   #onRollup = {
     form: (id, element)=>{
+      if (this.#currentForm.id === -1){
+        if (this.#currentForm.element){
+          this.#currentForm.element.remove();
+        }
+      }
+      else{
+        this.#onRollup.point(this.#currentForm.id, this.#currentForm.element);
+      }
       const point = this.#model.getPoint(id);
       const elem = new EditFormView(
         point,
@@ -42,11 +57,12 @@ export default class ListPoints{
         this.#onRollup.point
       ).getElement();
       element.replaceWith(elem);
+      this.#currentForm.id = id;
+      this.#currentForm.element = elem;
+      console.log(this.#currentForm.element);
     },
     point: (id, element)=>{
       const point = this.#model.getPoint(id);
-      console.log(id);
-      console.log(point);
       const elem = new RoutePoint(
         point,
         this.#model.getDestination(point.destination).name,

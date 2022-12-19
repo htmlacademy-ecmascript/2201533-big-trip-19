@@ -30,8 +30,8 @@ class Point{
     basePrice = 0,
     dateFrom = dayjs(),
     dateTo = dayjs(),
-    destination = null,
-    id = null,
+    destination = -1,
+    id = -1,
     isFavorite = false,
     offers = [],
     type = '') {
@@ -117,8 +117,8 @@ export default class Model{
   typeOfOffers = ()=>this.#typeOfOffers;
   types = ()=>Object.keys(this.#typeOfOffers);
   getOffers = (type, offers)=>Array.from(offers,id=>this.#typeOfOffers[type].find(element=>element.id === id));
-  getDestination = (id)=>id ? this.#destinations.find(element=>element.id === id) : new Destination();
-  getPoint = (id)=>id ? this.#points.find(element=>element.id === id) : new Point();
+  getDestination = (id)=>id > -1 ? this.#destinations.find(element=>element.id === id) : new Destination();
+  getPoint = (id)=>id > -1 ? this.#points.find(element=>element.id === id) : new Point();
   constructor(rest) {
     this.#rest = rest;
   };

@@ -9,9 +9,12 @@ import Model from './model.js';
 import Sorting from './view/sorting.js';
 import Filters from './view/filters.js';
 import Info from './view/info.js';
+import Presenter from './presenter.js';
 import {render, RenderPosition} from './render.js';
 const rest = new Rest();
 const model = new Model(rest);
+const presenter = new Presenter(model);
+presenter.start();
 
 model.init(()=>{
   if (model.points().length > 0){
