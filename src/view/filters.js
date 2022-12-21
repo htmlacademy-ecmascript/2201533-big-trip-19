@@ -17,7 +17,7 @@ class FilterItemInput{
   constructor(attr, id) {
     this.#element = createElement(this.#TEMPL);
     this.#element.id = id;
-    this.#element.value = attr.value;
+    this.#element.value = attr.name;
     this.#element.checked = attr.checked;
   }
   getElement = ()=>this.#element;
@@ -27,12 +27,16 @@ class FilterItem{
   #ID_PREF = 'filter-';
   #TEMPL = '<div class="trip-filters__filter"></div>';
   #element;
+  #input;
+  checked = ()=>{
+    this.#input.checked = true;
+  };
   constructor(item) {
     this.#element = createElement(this.#TEMPL);
     const id = `${this.#ID_PREF}${item.name}`;
     this.#element = createElement(this.#TEMPL);
-    const input = new FilterItemInput(item, id).getElement();
-    this.#element.append(input);
+    this.#input = new FilterItemInput(item, id).getElement();
+    this.#element.append(this.#input);
     const label = new FilterItemLabel(item, id).getElement();
     this.#element.append(label);
   }
@@ -40,20 +44,36 @@ class FilterItem{
 }
 
 export default class Filters{
+  #onChangeFilter;
   #ITEMS = [
     {name: 'everything', title:'Everything', checked: true},
     {name: 'future', title:'Future', checked: false},
     {name: 'present', title:'Present', checked: false},
     {name: 'past', title:'Past', checked: false}
   ];
+  #defaultFilter;
+  #defaultItem;
   #TEMPL = '<form class="trip-filters" action="#" method="get"></form>';
   #element;
-  constructor() {
+  reset = ()=>{
+    this.#defaultItem.checked();
+    this.#onChangeFilter(this.#defaultFilter);
+  }
+  constructor(changeFilter) {
+    this.#onChangeFilter = changeFilter;
     this.#element = createElement(this.#TEMPL);
     this.#ITEMS.forEach(item=>{
-      this.#element.append(new FilterItem(item).getElement());
+      const elem = new FilterItem(item);
+      this.#element.append(elem.getElement());
+      if (item.checked){
+        this.#defaultFilter = item.name;
+        this.#defaultItem = elem;
+      }
     });
-    this.#element.append(createElement('<button class="visually-hidden" type="submit">Accept filter</button>'))
+    this.#element.addEventListener('change', (evt)=>{
+      this.#onChangeFilter(evt.target.value);
+    })
+    this.#element.append(createElement('<button class="visually-hidden" type="submit">Accept filter</button>'));
   };
   getElement = ()=>this.#element;
 }

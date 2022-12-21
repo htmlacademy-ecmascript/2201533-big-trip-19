@@ -112,7 +112,16 @@ export default class Model{
     this.#rest.GET.destinations(this.#load.destinations, console.log);
     this.#rest.GET.offers(this.#load.offers, console.log);
   };
-  points = ()=>{return this.#points};
+  #filters = {
+    everything: ()=>true,
+    future: ()=>(point)=>point.dateFrom > this.#filters.currentDate,
+    present: (point)=>point.dateFrom <= this.#filters.currentDate && point.dateTo >= this.#filters.currentDate,
+    past: (point)=>point.dateTo < this.#filters.currentDate
+  };
+  points = (mode, currentDate)=>{
+    this.#filters.currentDate = currentDate;
+    return this.#points.filter(point=>this.#filters[mode](point));
+  };
   destinations = ()=>this.#destinations;
   typeOfOffers = ()=>this.#typeOfOffers;
   types = ()=>Object.keys(this.#typeOfOffers);

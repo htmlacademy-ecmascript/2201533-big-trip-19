@@ -16,25 +16,19 @@ const model = new Model(rest);
 const presenter = new Presenter(model);
 presenter.start();
 
-model.init(()=>{
-  if (model.points().length > 0){
-    const list = new ListPoints(model);
-    render(list, sortContainer);
-    eventAddButton.addEventListener('click', ()=>{list.newEvent()});
-  }
-});
 
-const sort = new Sorting()
-const filter = new Filters();
-const info = new Info();
 
-const sortContainer = document.querySelector('.trip-events');
-render(sort, sortContainer);
-const filterContainer = document.querySelector('.trip-controls__filters');
-render(filter, filterContainer);
-const infoContainer = document.querySelector('.trip-main');
-render(info, infoContainer, RenderPosition.AFTERBEGIN);
-const eventAddButton = document.querySelector('.trip-main__event-add-btn');
+// const sort = new Sorting()
+// const filter = new Filters();
+// const info = new Info();
+//
+// const sortContainer = document.querySelector('.trip-events');
+// render(sort, sortContainer);
+// const filterContainer = document.querySelector('.trip-controls__filters');
+// render(filter, filterContainer);
+// const infoContainer = document.querySelector('.trip-main');
+// render(info, infoContainer, RenderPosition.AFTERBEGIN);
+// const eventAddButton = document.querySelector('.trip-main__event-add-btn');
 
 
 

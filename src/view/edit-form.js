@@ -2,32 +2,32 @@ import {createElement} from '../render.js';
 import {ICONS} from '../setings.js';
 import RollupButton from './rollup-btn.js';
 
-class SectionDestinations{
-  #TEMPL;
-  #element;
-  constructor() {
-    this.#element = createElement(this.#TEMPL);
-  };
-  getElement = ()=>this.#element;
-}
-
-class SectionOffers{
-  #TEMPL;
-  #element;
-  constructor() {
-    this.#element = createElement(this.#TEMPL);
-  };
-  getElement = ()=>this.#element;
-}
-
-class Details{
-  #TEMPL = `<section class="event__details"></section>`;
-  #element;
-  constructor() {
-    this.#element = createElement(this.#TEMPL);
-  };
-  getElement = ()=>this.#element;
-}
+// class SectionDestinations{
+//   #TEMPL;
+//   #element;
+//   constructor() {
+//     this.#element = createElement(this.#TEMPL);
+//   };
+//   getElement = ()=>this.#element;
+// }
+//
+// class SectionOffers{
+//   #TEMPL;
+//   #element;
+//   constructor() {
+//     this.#element = createElement(this.#TEMPL);
+//   };
+//   getElement = ()=>this.#element;
+// }
+//
+// class Details{
+//   #TEMPL = `<section class="event__details"></section>`;
+//   #element;
+//   constructor() {
+//     this.#element = createElement(this.#TEMPL);
+//   };
+//   getElement = ()=>this.#element;
+// }
 
 class GroupPrice{
   #TEMPL;
@@ -129,27 +129,27 @@ class Wrapper{
   getElement = ()=>this.#element;
 }
 
-class Header{
-  #TEMPL = `<header class="event__header"></header>`;
-  #element;
-  constructor(point, types,destination, destinations, onRollup) {
-    this.#element = createElement(this.#TEMPL);
-    this.#element.append(new Wrapper(point, types, destinations).getElement());
-    this.#element.append(new GroupDestination(
-      point.id,
-      point.type,
-      destination,
-      destinations
-    ).getElement());
-    this.#element.append(new GroupTime(point.id, point.dateFrom, point.dateTo).getElement());
-    this.#element.append(new GroupPrice(point.id, point.basePrice).getElement());
-    this.#element.append(createElement(
-      '<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>'));
-    this.#element.append(createElement('<button class="event__reset-btn" type="reset">Delete</button>'));
-    this.#element.append(new RollupButton(onRollup).getElement());
-  };
-  getElement = ()=>this.#element;
-}
+// class Header{
+//   #TEMPL = `<header class="event__header"></header>`;
+//   #element;
+//   constructor(point, types,destination, destinations, onRollup) {
+//     this.#element = createElement(this.#TEMPL);
+//     this.#element.append(new Wrapper(point, types, destinations).getElement());
+//     this.#element.append(new GroupDestination(
+//       point.id,
+//       point.type,
+//       destination,
+//       destinations
+//     ).getElement());
+//     this.#element.append(new GroupTime(point.id, point.dateFrom, point.dateTo).getElement());
+//     this.#element.append(new GroupPrice(point.id, point.basePrice).getElement());
+//     this.#element.append(createElement(
+//       '<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>'));
+//     this.#element.append(createElement('<button class="event__reset-btn" type="reset">Delete</button>'));
+//     this.#element.append(new RollupButton(onRollup).getElement());
+//   };
+//   getElement = ()=>this.#element;
+// }
 
 export default class EditFormView{
   #point;
@@ -169,6 +169,8 @@ export default class EditFormView{
   #fieldSet;
   #offers;
   #onRollup;
+  #onSubmit;
+  #onReset;
   #sectionOffers;
   #sectionDestination;
   #createOffers = ()=>{
@@ -210,12 +212,11 @@ export default class EditFormView{
     </section>`;
     return createElement(destinationTemplate);
   };
-  constructor(point, types, destination, destinations, offers, onRollup) {
+  constructor(point, types, destination, destinations, offers, onRollup, formAction) {
     this.#point = point;
     this.#id = point.id === -1 ? '' : `-${point.id}`;
     this.#destination = destination;
     this.#offers = offers;
-    console.log(this.#point);
 
     const id = this.#id;
     const typeTitle = type=>type ? `${type[0].toUpperCase()}${type.slice(1)}` : '';
@@ -235,31 +236,31 @@ export default class EditFormView{
 
       <div class="event__field-group  event__field-group--destination">
         <!--          labelType          -->
-        <input class="event__input  event__input--destination" id="event-destination-${id}" type="text"
-          name="event-destination" value="${destination.name}" list="destination-list-${id}">
-        <datalist id="destination-list-${id}">
+        <input class="event__input  event__input--destination" id="event-destination${id}" type="text"
+          name="event-destination" value="${destination.name}" list="destination-list${id}">
+        <datalist id="destination-list${id}">
           ${Array.from(destinations, (elem)=>`<option value="${elem.name}"></option>`).join('')}
         </datalist>
       </div>
 
       <div class="event__field-group  event__field-group--time">
-        <label class="visually-hidden" for="event-start-time-${id}">From</label>
-        <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${point.dateFrom.format('DD/MM/YY HH:mm')}">
+        <label class="visually-hidden" for="event-start-time${id}">From</label>
+        <input class="event__input  event__input--time" id="event-start-time${id}" type="text" name="event-start-time" value="${point.dateFrom.format('DD/MM/YY HH:mm')}">
         &mdash;
-        <label class="visually-hidden" for="event-end-time-${id}">To</label>
-        <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${point.dateTo.format('DD/MM/YY HH:mm')}">
+        <label class="visually-hidden" for="event-end-time${id}">To</label>
+        <input class="event__input  event__input--time" id="event-end-time${id}" type="text" name="event-end-time" value="${point.dateTo.format('DD/MM/YY HH:mm')}">
       </div>
 
       <div class="event__field-group  event__field-group--price">
-        <label class="event__label" for="event-price-${id}">
+        <label class="event__label" for="event-price${id}">
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${point.basePrice}">
+        <input class="event__input  event__input--price" id="event-price${id}" type="text" name="event-price" value="${point.basePrice}">
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">Delete</button>
+      <button class="event__reset-btn" type="reset">${id ? 'Delete' : 'Cancel'}</button>
       <!--          rollupButton          -->
     </header>`;
 
@@ -267,13 +268,13 @@ export default class EditFormView{
       `<fieldset class="event__type-group">
         <legend class="visually-hidden">Event type</legend>
         ${Array.from(types, type=>`<div class="event__type-item">
-            <input id="event-type-${type}-${id}" class="event__type-input  visually-hidden" type="radio"
+            <input id="event-type-${type}${id}" class="event__type-input  visually-hidden" type="radio"
               name="event-type" value="${type}"${type === point.type ? ' checked': ''}>
-            <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${id}">${typeTitle(type)}</label>
+            <label class="event__type-label  event__type-label--${type}" for="event-type-${type}${id}">${typeTitle(type)}</label>
           </div>`).join('')}
       </fieldset>`;
 
-    const labelTypeTemplate = `<label class="event__label  event__type-output" for="event-destination-${id}">
+    const labelTypeTemplate = `<label class="event__label  event__type-output" for="event-destination${id}">
           ${typeTitle(point.type)}
         </label>`;
 
@@ -285,11 +286,13 @@ export default class EditFormView{
       onRollup(this.#point.id, this.#element)
     };
 
+    this.#onSubmit = formAction.onSubmit;
+    this.#onReset = formAction.onReset;
+
     this.#header = createElement(headerTemplate);
     this.#iconType = createElement(iconTypeTemplate);
     this.#buttonType = this.#header.querySelector('.event__type-btn');
     this.#buttonType.addEventListener('click', ()=>{
-      console.log(`wrapper: ${this.#listTypes.style.display}`);
       const states = {
         block: 'none',
         none: 'block'
@@ -299,11 +302,11 @@ export default class EditFormView{
     this.#labelType = createElement(labelTypeTemplate);
     this.#fieldSet = createElement(fieldSetTemplate);
     this.#listTypes = this.#header.querySelector('.event__type-list');
-    this.#inputDestination = this.#header.querySelector(`#event-destination-${id}`);
+    this.#inputDestination = this.#header.querySelector(`#event-destination${id}`);
     this.#inputDestination.addEventListener('change', (evt)=>{
       const destination = destinations.find(element=>element.name === evt.target.value);
       if (destination){
-        this.#destination = destinations.find(element=>element.name === evt.target.value);
+        this.#destination = destination;
         this.#point.destination = this.#destination.id;
         if (this.#sectionDestination){
           this.#sectionDestination.remove();
@@ -314,7 +317,6 @@ export default class EditFormView{
           this.#details.append(this.#sectionDestination);
         }
       }
-      console.log(evt.target);
     });
     this.#fieldSet.addEventListener('change', (evt)=>{
       const type = evt.target.value;
@@ -350,6 +352,9 @@ export default class EditFormView{
     if (this.#sectionDestination){
       this.#details.append(this.#sectionDestination);
     }
+    this.#element.addEventListener('submit',this.#onSubmit);
+    this.#element.addEventListener('reset',this.#onReset);
+    document.addEventListener('keydown',this.#onReset);
   };
   getElement = ()=>this.#element;
 };
