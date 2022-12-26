@@ -67,9 +67,9 @@ export default class RoutePoint{
   #element;
   #id;
   #onRollup;
-  constructor(point, destination, offers, onRollup) {
-    this.#id = point.id;
-    this.#onRollup = ()=>{onRollup(this.#id, this.#element)}
+  constructor(id, point, destination, offers, onRollup) {
+    this.#id = id;
+    this.#onRollup = ()=>{onRollup(this.#id)}
     const duration = ()=>{
       let m = Math.floor(dayjs.duration(point.dateTo.diff(point.dateFrom)).asMinutes());
       const d = Math.floor(m/60/24);

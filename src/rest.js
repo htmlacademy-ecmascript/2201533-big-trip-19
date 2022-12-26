@@ -25,7 +25,51 @@ export default class Rest{
       .then(onSuccess)
       .catch(onError)
       ;
-  }
+  };
+
+  PUT = (point, onSuccess, onError)=>{
+    const url = `${this.#BASE_URL}${this.#endpoints.points}/:${point.id}`;
+    fetch(url,{
+      method: 'PUT',
+      headers: {
+        Authorization: `Basic ${this.#randomString}`,
+        'Content-Type': 'application/json; charset=utf-8'
+      },
+      body: JSON.stringify(point)
+    })
+      .then((response)=>{
+        if (response.ok) {
+          return response.json();
+        }
+        throw `status: ${response.status},
+          statusText: ${response.statusText}`;
+      })
+      .then(onSuccess)
+      .catch(onError)
+    ;
+  };
+
+  POST = (point, onSuccess, onError)=>{
+    const url = `${this.#BASE_URL}${this.#endpoints.points}`;
+    fetch(url,{
+      method: 'POST',
+      headers: {
+        Authorization: `Basic ${this.#randomString}`,
+        'Content-Type': 'application/json; charset=utf-8'
+      },
+      body: JSON.stringify(point)
+    })
+      .then((response)=>{
+        if (response.ok) {
+          return response.json();
+        }
+        throw `status: ${response.status},
+          statusText: ${response.statusText}`;
+      })
+      .then(onSuccess)
+      .catch(onError)
+    ;
+  };
 
   GET = {
     points: (onSuccess, onError)=>{

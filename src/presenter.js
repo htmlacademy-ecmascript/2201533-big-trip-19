@@ -2,7 +2,7 @@ import Sorting from './view/sorting.js';
 import Filters from './view/filters.js';
 import Info from './view/info.js';
 import {render, RenderPosition} from './render.js';
-import ListPoints from './view/list-points';
+import ListPoints from './view/list-points.js';
 
 export default class Presenter{
   #sort;
@@ -13,7 +13,6 @@ export default class Presenter{
   #list;
   #eventAddButton;
   #onChangeFilter = (mode)=>{
-    console.log(mode);
     this.#filterMode = mode;
     this.#list.filterPoints(this.#filterMode);
   };
@@ -34,8 +33,9 @@ export default class Presenter{
     this.#eventAddButton.disabled = true;
     this.#model.init(()=>{
       this.#list = new ListPoints(this.#model, this.#actions);
+      this.#list.onPost = this.#actions.onPost;
+      this.#list.onClose = ()=>this.#actions.onCloseAddForm();
       this.#filter.reset();
-//      this.#list.filterPoints(this.#filterMode);
       this.#eventAddButton.disabled = false;
       this.#eventAddButton.addEventListener('click', ()=>{
         this.#eventAddButton.disabled = true;
@@ -43,11 +43,24 @@ export default class Presenter{
         this.#list.newEvent();
       });
       render(this.#list, sortContainer);
+
     });
   };
   #actions = {
     onCloseAddForm: ()=>{
       this.#eventAddButton.disabled = false;
     },
+    onPost: (point)=>{
+      this.#model.post(point, (newPoint)=>{
+        this.#list.addPoint(newPoint);
+      });
+    },
+    onPut: (point)=>{
+      this.#model.put(point, ()=>{
+        this.#list.alterPoint(point);
+      }, ()=>{
+
+      });
+    }
   };
 }

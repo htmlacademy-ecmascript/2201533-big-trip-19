@@ -25,7 +25,7 @@ class Offer{
   }
 }
 
-class Point{
+class Point {
   constructor(
     basePrice = 0,
     dateFrom = dayjs(),
@@ -43,6 +43,43 @@ class Point{
     this.isFavorite = isFavorite;
     this.offers = offers;
     this.type = type;
+  };
+
+  #newKey = (oldKey) => {
+    let newKey = oldKey;
+    for (let char of newKey) {
+      if (char === char.toUpperCase()) {
+        newKey = newKey.replace(char, `_${char.toLowerCase()}`)
+      }
+    }
+    return newKey;
+  };
+
+  get localPoint() {
+    const pointAs = {};
+    for (const [key, value] of Object.entries(this)) {
+      if (key !== 'id') {
+        pointAs[this.#newKey(key)] = value;
+      }
+    }
+    return pointAs;
+  };
+
+  get asInBase() {
+    const pointAs = {};
+    for (const [key, value] of Object.entries(this)) {
+      pointAs[this.#newKey(key)] = value;
+    }
+    return pointAs;
+  };
+
+  equal = (point) => {
+    for (const [key, value] of Object.entries(this)) {
+      if (point[key] !== value) {
+        return false;
+      }
+    }
+    return true;
   }
 }
 
@@ -57,23 +94,24 @@ export default class Model{
     destinations: false,
     offers: false,
     check: ()=>this.#loaded.points && this.#loaded.destinations && this.#loaded.offers
-  }
+  };
+  #addPoint = (point)=>{
+    this.#points.push(
+      new Point(
+        point.base_price,
+        dayjs(point.date_from),
+        dayjs(point.date_to),
+        point.destination,
+        parseInt(point.id, 10),
+        point.is_favorite,
+        point.offers,
+        point.type
+      )
+    )
+  };
   #load = {
     points: (json)=>{
-      json.forEach(point=>{
-        this.#points.push(
-          new Point(
-            point.base_price,
-            dayjs(point.date_from),
-            dayjs(point.date_to),
-            point.destination,
-            parseInt(point.id, 10),
-            point.is_favorite,
-            point.offers,
-            point.type
-          )
-        )
-      });
+      json.forEach(point=>this.#addPoint(point));
       this.#loaded.points = true;
       if (this.#loaded.check()){
         this.#onLoad();
@@ -111,6 +149,25 @@ export default class Model{
     this.#rest.GET.points(this.#load.points, console.log);
     this.#rest.GET.destinations(this.#load.destinations, console.log);
     this.#rest.GET.offers(this.#load.offers, console.log);
+  };
+  post = (point, onAdd)=>{
+    this.#rest.POST(point.localPoint, (resp)=>{
+      this.#addPoint(resp);
+      point.id = parseInt(resp.id, 10);
+      onAdd(point);
+    }, console.log);
+  };
+  put = (point, onAlter, doNothing)=>{
+    const pointModel = this.getPoint(point.id);
+    if (pointModel.equal(point)){
+      doNothing()
+    }
+    else{
+      this.#rest.PUT(point.asInBase, (resp)=>{
+        pointModel.alter(point);
+        onAlter();
+      }, doNothing)
+    }
   };
   #filters = {
     everything: ()=>true,

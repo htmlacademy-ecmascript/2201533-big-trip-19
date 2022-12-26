@@ -1,14 +1,14 @@
-import {createElement} from '../render';
-import RoutePoint from './route-point';
-import EditFormView from './edit-form';
+import {createElement} from '../render.js';
+import RoutePoint from './route-point.js';
+import EditFormView from './edit-form.js';
 import dayjs from 'dayjs';
 
 class ItemPoint{
   #TEMPL = '<li class="trip-events__item"></li>';
   #element;
-  constructor(point, destination, offers, onRollup) {
+  constructor(id, point, destination, offers, onRollup) {
     this.#element = createElement(this.#TEMPL);
-    this.#element.append(new RoutePoint(point, destination, offers, onRollup).getElement());
+    this.#element.append(new RoutePoint(id, point, destination, offers, onRollup).getElement());
   };
   getElement = ()=>this.#element;
 }
@@ -21,17 +21,15 @@ export default class ListPoints{
   #currentForm = {
     id: -1,
     element: null,
+    form: null,
     reset: function(){
-      if (this.isNew()){
-        this.onClose();
-      }
       this.id = -1;
       this.element = null;
+      this.form = null;
     },
     isNew: function(){
-      return this.id === -1 && this.element;
+      return this.id === -1 && this.form;
     },
-    onClose: ()=>{}
   };
   #list;
   #prompt;
@@ -46,85 +44,107 @@ export default class ListPoints{
       this.#onRollup.point(this.#currentForm.id, this.#currentForm.element);
     }
     const point = this.#model.getPoint(-1);
-    const elem = new EditFormView(
+
+    const form = new EditFormView(
         point,
         this.#model.types(),
         this.#model.getDestination(point.destination),
         this.#model.destinations(),
         this.#model.typeOfOffers(),
       null,
-        this.#formsAction
-      ).getElement();
-      this.#list.prepend(elem);
+//        this.#formsAction
+      );
+    form.buttonCancel.addEventListener('click', ()=>{console.log('cancel new form')});
+    const elem = form.getElement();
+    elem.addEventListener('submit', this.#formsAction.onSubmit);
+    this.#list.prepend(elem);
     this.#currentForm.id = -1;
     this.#currentForm.element = elem;
+    this.#currentForm.form = form;
     this.#setElement();
+    document.addEventListener('keydown', this.#formsAction.onKeyDown);
   };
   #formsAction = {
     onSubmit: (evt)=>{
       evt.preventDefault();
-      console.log('submit')
-    },
-    onReset: (evt)=>{
-      if (evt.target.tagName !== 'FORM'){
-        return;
+      if (this.#currentForm.isNew()){
+        this.#formsAction.onPost(this.#currentForm.form.point);
       }
+      else{
+        this.#formsAction.onPut(this.#currentForm.form.point);
+      }
+      this.#formsAction.remove();
+      this.#currentForm.reset();
+    },
+    remove: ()=>{
+      document.removeEventListener('keydown', this.#formsAction.onKeyDown);
       if (this.#currentForm.isNew()){
         this.#currentForm.element.remove();
         this.#currentForm.reset();
+        this.#formsAction.onClose();
       }
       if (this.#currentForm.id > -1){
-        //Это вообще-то Delete со всеми вытекающими
-        this.#onRollup.point(this.#currentForm.id, this.#currentForm.element);
+        this.#onRollup.point(this.#currentForm.id);
       }
-    }
+    },
+    onKeyDown: (evt)=>{
+      if (evt.key === 'Escape'){
+        this.#formsAction.remove();
+      }
+    },
+    onCancel: ()=>{
+
+    },
+    onClose: ()=>{},
+    onPut: ()=>{},
+    onDelete: ()=>{},
+    onPost: ()=>{}
   };
+
+  set onPost(onPost){
+    this.#formsAction.onPost = onPost;
+  };
+  set onClose(onClose){
+    this.#formsAction.onClose = onClose;
+  };
+
   #onRollup = {
-    form: (id, element)=>{
-      // if (this.#currentForm.isNew()){
-      //   this.#currentForm.element.remove();
-      //   this.#currentForm.reset();
-      // }
-      // if (this.#currentForm.id > -1){
-      //   this.#onRollup.point(this.#currentForm.id, this.#currentForm.element);
-      // }
-      this.#formsAction.onReset();
-      const point = this.#model.getPoint(id);
-      const elem = new EditFormView(
+    form: (id)=>{
+      this.#formsAction.remove();
+      const point = this.#points[id];
+      const form = new EditFormView(
         point,
         this.#model.types(),
         this.#model.getDestination(point.destination),
         this.#model.destinations(),
         this.#model.typeOfOffers(),
         this.#onRollup.point,
-        this.#formsAction
-      ).getElement();
-      element.replaceWith(elem);
+      );
+      form.buttonCancel.addEventListener('click', ()=>{console.log('cancel edit form')});
+      const elem = form.getElement();
+      elem.addEventListener('submit', this.#formsAction.onSubmit);
+      point.item.getElement().replaceWith(elem);
       this.#currentForm.id = id;
       this.#currentForm.element = elem;
+      this.#currentForm.form = form;
+      document.addEventListener('keydown', this.#formsAction.onKeyDown);
     },
-    point: (id, element)=>{
-      const point = this.#model.getPoint(id);
-      const elem = new RoutePoint(
-        point,
-        this.#model.getDestination(point.destination).name,
-        point.offers.length > 0 ? this.#model.getOffers(point.type, point.offers): false,
-        this.#onRollup.form
-      ).getElement();
-      element.replaceWith(elem);
+    point: ()=>{
+      this.#currentForm.form.getElement().replaceWith(this.#points[this.#currentForm.id].item.getElement());
     }
   };
   #fillList = ()=>{
     this.#list.replaceChildren();
     this.#currentForm.reset();
-    this.#points.forEach(point=>{
-      const li = new ItemPoint(
+    this.#points.forEach((point, index)=>{
+      point.item = new ItemPoint(
+        index,
         point,
         this.#model.getDestination(point.destination).name,
         point.offers.length > 0 ? this.#model.getOffers(point.type, point.offers): false,
         this.#onRollup.form
-        ).getElement();
-      this.#list.append(li);
+        );
+      this.#list.append(point.item.getElement());
     });
   };
   #setElement = ()=>{
@@ -134,7 +154,6 @@ export default class ListPoints{
     };
     const need = this.#points.length > 0 || this.#currentForm.isNew() ? 'UL': 'P';
     if (this.#element){
-      console.log(this.#element.tagName);
       if (this.#element.tagName === need){
         return;
       }
@@ -151,11 +170,29 @@ export default class ListPoints{
     this.#prompt.textContent = this.#PROMPT_TEXTS[mode];
     this.#setElement();
   };
+  addPoint = (point)=>{
+    const index = this.#points.findIndex(elem=>elem.dateFrom > point.dateFrom);
+    point.item = new ItemPoint(
+      index,
+      point,
+      this.#model.getDestination(point.destination).name,
+      point.offers.length > 0 ? this.#model.getOffers(point.type, point.offers): false,
+      this.#onRollup.form
+    );
+    if (index > -1){
+      const before = this.#points[index].item.getElement();
+      this.#points.splice(index, 0, point);
+      before.insertAdjacentElement('beforebegin', point.item.getElement());
+    }
+    else{
+      this.#points.push(point);
+      this.#list.append(point.item.getElement());
+    }
+  };
   constructor(model, actions) {
     this.#model = model;
     this.#list = createElement(this.#TEMPL);
     this.#prompt = createElement('<p class="trip-events__msg"></p>');
-    this.#currentForm.onClose = actions.onCloseAddForm;
   };
   getElement = ()=>this.#element;
 }
