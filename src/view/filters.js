@@ -32,10 +32,9 @@ class FilterItem{
     this.#input.checked = true;
   };
   constructor(item) {
-    this.#element = createElement(this.#TEMPL);
     const id = `${this.#ID_PREF}${item.name}`;
-    this.#element = createElement(this.#TEMPL);
     this.#input = new FilterItemInput(item, id).getElement();
+    this.#element = createElement(this.#TEMPL);
     this.#element.append(this.#input);
     const label = new FilterItemLabel(item, id).getElement();
     this.#element.append(label);

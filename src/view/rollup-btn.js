@@ -6,9 +6,18 @@ export default class RollupButton{
     <span class="visually-hidden">Open event</span>
   </button>`;
   #element;
-  constructor(onClick) {
+  constructor() {
     this.#element = createElement(this.#TEMPL);
-    this.#element.addEventListener('click', onClick)
+//    this.#element.addEventListener('click', onClick)
   };
+
+  render(parent){
+    parent.append(this.#element);
+  };
+
+  remove(){
+    this.#element.remove();
+  };
+
   getElement = ()=>this.#element;
 }

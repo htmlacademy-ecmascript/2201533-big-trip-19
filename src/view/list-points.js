@@ -1,158 +1,60 @@
 import {createElement} from '../render.js';
-import RoutePoint from './route-point.js';
 import EditFormView from './edit-form.js';
 import dayjs from 'dayjs';
-
-class ItemPoint{
-  #TEMPL = '<li class="trip-events__item"></li>';
-  #element;
-  constructor(id, point, destination, offers, onRollup) {
-    this.#element = createElement(this.#TEMPL);
-    this.#element.append(new RoutePoint(id, point, destination, offers, onRollup).getElement());
-  };
-  getElement = ()=>this.#element;
-}
+import {RenderPosition} from '../render.js';
+import {ACTIONS, PROMPT_TEXTS} from '../setings';
+import ItemRollup from './item-rollup';
+import Point from '../model/point';
+import ItemNewForm from './item-new-form';
 
 export default class ListPoints{
   #TEMPL = '<ul class="trip-events__list"></ul>';
   #element;
   #model;
   #points;
-  #currentForm = {
-    id: -1,
-    element: null,
-    form: null,
-    reset: function(){
-      this.id = -1;
-      this.element = null;
-      this.form = null;
-    },
-    isNew: function(){
-      return this.id === -1 && this.form;
-    },
-  };
+  #items = {};
+  #itemNewPoint;
+  #form;
+  #onSubmit;
+  #onChangeState;
   #list;
   #prompt;
-  #PROMPT_TEXTS = {
-    everything: 'Click New Event to create your first point',
-    future: 'There are no future events now',
-    present: 'There are no present events now',
-    past: 'There are no past events now'
-  };
+  #onChangeFavourite = ()=>{};
+
   newEvent = ()=>{
-    if (this.#currentForm.id > -1){
-      this.#onRollup.point(this.#currentForm.id, this.#currentForm.element);
-    }
-    const point = this.#model.getPoint(-1);
-
-    const form = new EditFormView(
-        point,
-        this.#model.types(),
-        this.#model.getDestination(point.destination),
-        this.#model.destinations(),
-        this.#model.typeOfOffers(),
-      null,
-//        this.#formsAction
-      );
-    form.buttonCancel.addEventListener('click', ()=>{console.log('cancel new form')});
-    const elem = form.getElement();
-    elem.addEventListener('submit', this.#formsAction.onSubmit);
-    this.#list.prepend(elem);
-    this.#currentForm.id = -1;
-    this.#currentForm.element = elem;
-    this.#currentForm.form = form;
+    this.#itemNewPoint.point = new Point();
+    this.#itemNewPoint.showForm();
     this.#setElement();
-    document.addEventListener('keydown', this.#formsAction.onKeyDown);
-  };
-  #formsAction = {
-    onSubmit: (evt)=>{
-      evt.preventDefault();
-      if (this.#currentForm.isNew()){
-        this.#formsAction.onPost(this.#currentForm.form.point);
-      }
-      else{
-        this.#formsAction.onPut(this.#currentForm.form.point);
-      }
-      this.#formsAction.remove();
-      this.#currentForm.reset();
-    },
-    remove: ()=>{
-      document.removeEventListener('keydown', this.#formsAction.onKeyDown);
-      if (this.#currentForm.isNew()){
-        this.#currentForm.element.remove();
-        this.#currentForm.reset();
-        this.#formsAction.onClose();
-      }
-      if (this.#currentForm.id > -1){
-        this.#onRollup.point(this.#currentForm.id);
-      }
-    },
-    onKeyDown: (evt)=>{
-      if (evt.key === 'Escape'){
-        this.#formsAction.remove();
-      }
-    },
-    onCancel: ()=>{
-
-    },
-    onClose: ()=>{},
-    onPut: ()=>{},
-    onDelete: ()=>{},
-    onPost: ()=>{}
   };
 
-  set onPost(onPost){
-    this.#formsAction.onPost = onPost;
-  };
-  set onClose(onClose){
-    this.#formsAction.onClose = onClose;
+  set onChangeFavourite(onChangeFavourite){
+    this.#onChangeFavourite = onChangeFavourite;
   };
 
-  #onRollup = {
-    form: (id)=>{
-      this.#formsAction.remove();
-      const point = this.#points[id];
-      const form = new EditFormView(
-        point,
-        this.#model.types(),
-        this.#model.getDestination(point.destination),
-        this.#model.destinations(),
-        this.#model.typeOfOffers(),
-        this.#onRollup.point,
-      );
-      form.buttonCancel.addEventListener('click', ()=>{console.log('cancel edit form')});
-      const elem = form.getElement();
-      elem.addEventListener('submit', this.#formsAction.onSubmit);
-      point.item.getElement().replaceWith(elem);
-      this.#currentForm.id = id;
-      this.#currentForm.element = elem;
-      this.#currentForm.form = form;
-      document.addEventListener('keydown', this.#formsAction.onKeyDown);
-    },
-    point: ()=>{
-      this.#currentForm.form.getElement().replaceWith(this.#points[this.#currentForm.id].item.getElement());
-    }
+  set onChangeState(onChangeState){
+    this.#onChangeState = onChangeState;
   };
+
   #fillList = ()=>{
+    if (this.#form.owner){
+      this.#form.owner.hideForm();
+    }
     this.#list.replaceChildren();
-    this.#currentForm.reset();
-    this.#points.forEach((point, index)=>{
-      point.item = new ItemPoint(
-        index,
-        point,
-        this.#model.getDestination(point.destination).name,
-        point.offers.length > 0 ? this.#model.getOffers(point.type, point.offers): false,
-        this.#onRollup.form
-        );
-      this.#list.append(point.item.getElement());
+    this.#points.list.forEach((point)=>{
+      this.#list.append(this.#items[point.id].getElement());
     });
   };
+
   #setElement = ()=>{
     const tags = {
       UL: this.#list,
       P: this.#prompt
     };
-    const need = this.#points.length > 0 || this.#currentForm.isNew() ? 'UL': 'P';
+    const isNew = this.#form.owner instanceof ItemNewForm;
+    if (!isNew){
+      this.#onChangeState(this.#points.length === 0);
+    }
+    const need = this.#points.length > 0 || isNew ? 'UL': 'P';
     if (this.#element){
       if (this.#element.tagName === need){
         return;
@@ -164,35 +66,111 @@ export default class ListPoints{
       this.#element = tags[need];
     }
   };
+
   filterPoints = (mode)=>{
-    this.#points = this.#model.points(mode, dayjs());
+    this.#points = this.#model.pointsFilter(mode, dayjs());
     this.#fillList();
-    this.#prompt.textContent = this.#PROMPT_TEXTS[mode];
+    this.#prompt.textContent = PROMPT_TEXTS[mode];
     this.#setElement();
   };
-  addPoint = (point)=>{
-    const index = this.#points.findIndex(elem=>elem.dateFrom > point.dateFrom);
-    point.item = new ItemPoint(
-      index,
-      point,
-      this.#model.getDestination(point.destination).name,
-      point.offers.length > 0 ? this.#model.getOffers(point.type, point.offers): false,
-      this.#onRollup.form
-    );
-    if (index > -1){
-      const before = this.#points[index].item.getElement();
-      this.#points.splice(index, 0, point);
-      before.insertAdjacentElement('beforebegin', point.item.getElement());
-    }
-    else{
-      this.#points.push(point);
-      this.#list.append(point.item.getElement());
+
+  sort(mode, order){
+    this.#points.sort[mode](order);
+    this.#fillList();
+  };
+
+  #onKeyDown = (evt) => {
+    if (this.#form.owner && evt.key === 'Escape'){
+      this.#form.owner.hideForm();
     }
   };
-  constructor(model, actions) {
+
+  #newItem = (point)=>{
+    const item = new ItemRollup(
+      this.#form,
+      point,
+      this.#model.destinations[point.destination].name,
+      point.offers.length > 0 ? this.#model.getOffers(point.type, point.offers): false,
+    );
+    item.routePoint.favouriteButton.getElement().addEventListener('click', ()=>{
+      this.#onChangeFavourite(point)
+    });
+    item.onSubmit = this.#onSubmit;
+    this.#items[point.id] = item;
+  };
+
+  addPoint = (options) => {
+    const point = options.point;
+    const index = this.#points.list.findIndex((elem) => elem.dateFrom > point.dateFrom);
+    this.#newItem(point);
+    if (index > -1){
+      const before = this.#items[this.#points.list[index].id].getElement();
+      this.#points.list.splice(index, 0, point);
+      before.insertAdjacentElement(RenderPosition.BEFOREBEGIN, this.#items[point.id].getElement());
+    }
+    else{
+      this.#points.list.push(point);
+      this.#list.append(this.#items[point.id].getElement());
+    }
+    this.#setElement();
+    this.#form.owner.hideForm();
+  };
+
+  alterPoint = (options) => {
+    const point = options.point;
+    const alter = options.alter;
+    const destination = this.#model.destinations[point.destination].name;
+    const offers = alter.includes('offers') && point.offers.length > 0 ?
+      this.#model.getOffers(point.type, point.offers): false;
+    if (alter.includes('dateFor') || alter.includes('dateTo')){
+      alter.push('duration');
+    }
+    if (alter.includes('destination') || alter.includes('type')){
+      alter.push('title');
+    }
+    this.#form.owner.point = point;
+    this.#form.owner.routePoint.update(point, alter, destination, offers);
+    this.#form.owner.hideForm();
+  };
+
+  changeFavourite = (point) => {
+    this.#items[point.id].routePoint.favouriteButton.state = point.isFavorite;
+  };
+
+  deleteItem = (options) => {
+    const id = options.id;
+    this.#points.delete(id);
+    this.#items[id].getElement().remove();
+    delete this.#items[id];
+    this.#setElement();
+  };
+
+  set onSubmit(onSubmit){
+    this.#onSubmit = (mode, point) => {
+      onSubmit(mode, point, this[ACTIONS[mode].back], console.log)
+    };
+  };
+
+  set onCancel(onCancel){
+    this.#itemNewPoint.onCancel = onCancel;
+  };
+
+  init = () => {
+    this.#model.points.list.forEach(point => {
+      this.#newItem(point);
+    });
+    this.#itemNewPoint = new ItemNewForm(this.#form);
+    this.#itemNewPoint.list = this.#list;
+    this.#itemNewPoint.onSubmit = this.#onSubmit;
+    document.addEventListener('keydown', this.#onKeyDown);
+  };
+
+  constructor(model) {
     this.#model = model;
     this.#list = createElement(this.#TEMPL);
     this.#prompt = createElement('<p class="trip-events__msg"></p>');
+    this.#form = new EditFormView(this.#model.types(), this.#model.destinations, this.#model.typeOfOffers);
   };
+
   getElement = ()=>this.#element;
 }

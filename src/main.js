@@ -5,9 +5,9 @@ const customParseFormat = require('dayjs/plugin/customParseFormat')
 dayjs.extend(customParseFormat)
 const flatpickr = require('flatpickr');
 require("flatpickr/dist/themes/dark.css");
-import Rest from './rest.js';
-import Model from './model.js';
-import Presenter from './presenter.js';
+import Rest from './model/rest.js';
+import Model from './model/model.js';
+import Presenter from './presenter/presenter.js';
 const rest = new Rest();
 const model = new Model(rest);
 const presenter = new Presenter(model);

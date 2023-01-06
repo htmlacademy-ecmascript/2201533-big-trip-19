@@ -7,7 +7,7 @@ export default class Rest{
     offers: 'offers'
   };
   #randomString;
-  #get = (endpoint, onSuccess, onError)=>{
+  #get = (endpoint, onSuccess, onError) => {
     const url = `${this.#BASE_URL}${endpoint}`;
     fetch(url,{
       method: 'GET',
@@ -15,7 +15,7 @@ export default class Rest{
         Authorization: `Basic ${this.#randomString}`
       }
     })
-      .then((response)=>{
+      .then((response) => {
         if (response.ok) {
           return response.json();
         }
@@ -27,17 +27,37 @@ export default class Rest{
       ;
   };
 
-  PUT = (point, onSuccess, onError)=>{
-    const url = `${this.#BASE_URL}${this.#endpoints.points}/:${point.id}`;
+  DELETE = (id, onSuccess, onError) => {
+    const url = `${this.#BASE_URL}${this.#endpoints.points}/${id}`;
+    fetch(url,{
+      method: 'DELETE',
+      headers: {
+        Authorization: `Basic ${this.#randomString}`,
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          return true;
+        }
+        throw `status: ${response.status},
+          statusText: ${response.statusText}`;
+      })
+      .then(onSuccess)
+      .catch(msg => onError(msg))
+    ;
+  };
+
+  PUT = (point, onSuccess, onError) => {
+    const url = `${this.#BASE_URL}${this.#endpoints.points}/${point.id}`;
     fetch(url,{
       method: 'PUT',
       headers: {
         Authorization: `Basic ${this.#randomString}`,
         'Content-Type': 'application/json; charset=utf-8'
       },
-      body: JSON.stringify(point)
+      body: point.forAlterPoint
     })
-      .then((response)=>{
+      .then((response) => {
         if (response.ok) {
           return response.json();
         }
@@ -45,11 +65,11 @@ export default class Rest{
           statusText: ${response.statusText}`;
       })
       .then(onSuccess)
-      .catch(onError)
+      .catch(msg => onError(msg))
     ;
   };
 
-  POST = (point, onSuccess, onError)=>{
+  POST = (point, onSuccess, onError) => {
     const url = `${this.#BASE_URL}${this.#endpoints.points}`;
     fetch(url,{
       method: 'POST',
@@ -59,7 +79,7 @@ export default class Rest{
       },
       body: JSON.stringify(point)
     })
-      .then((response)=>{
+      .then((response) => {
         if (response.ok) {
           return response.json();
         }
@@ -72,13 +92,13 @@ export default class Rest{
   };
 
   GET = {
-    points: (onSuccess, onError)=>{
+    points: (onSuccess, onError) => {
       this.#get(this.#endpoints.points, onSuccess, onError)
     },
-    destinations: (onSuccess, onError)=>{
+    destinations: (onSuccess, onError) => {
       this.#get(this.#endpoints.destinations, onSuccess, onError)
     },
-    offers: (onSuccess, onError)=>{
+    offers: (onSuccess, onError) => {
       this.#get(this.#endpoints.offers, onSuccess, onError)
     }
   };

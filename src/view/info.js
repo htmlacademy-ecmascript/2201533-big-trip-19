@@ -1,19 +1,29 @@
 import {createElement} from '../render';
 
 export default class Info{
-  #TEMPL = `
-    <section class="trip-main__trip-info  trip-info">
-      <div class="trip-info__main">
-        <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
-        <p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>
-      </div>
-      <p class="trip-info__cost">
-        Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
-      </p>
-    </section>`;
   #element;
+  #infoContainer;
+  #costContainer;
+  #title;
+  #dates;
+  #cost;
+  set data(dataInfo){
+    this.#title.textContent = dataInfo.title;
+    this.#dates.textContent = dataInfo.date;
+    this.#cost.textContent = dataInfo.price;
+  }
   constructor() {
-    this.#element = createElement(this.#TEMPL);
+    this.#infoContainer = createElement(`<div class="trip-info__main"></div>`);
+    this.#costContainer = createElement(`<p class="trip-info__cost">Total: € </p>`);
+    this.#title = createElement(`<h1 class="trip-info__title"></h1>`);
+    this.#dates = createElement(`<p class="trip-info__dates"></p>`);
+    this.#cost = createElement(`<span class="trip-info__cost-value"></span>`);
+    this.#element = createElement(`<section class="trip-main__trip-info  trip-info"></section>`);
+    this.#infoContainer.append(this.#title);
+    this.#infoContainer.append(this.#dates);
+    this.#costContainer.append(this.#cost);
+    this.#element.append(this.#infoContainer);
+    this.#element.append(this.#costContainer);
   }
   getElement = ()=>this.#element;
 }
