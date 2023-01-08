@@ -1,23 +1,24 @@
 import {createElement} from '../render.js';
 
-export default class RollupButton{
+export default class RollupButton {
   #TEMPL =
-  `<button class="event__rollup-btn" type="button">
+    `<button class="event__rollup-btn" type="button">
     <span class="visually-hidden">Open event</span>
   </button>`;
+
   #element;
+
   constructor() {
     this.#element = createElement(this.#TEMPL);
-//    this.#element.addEventListener('click', onClick)
-  };
+  }
 
-  render(parent){
+  render(parent) {
     parent.append(this.#element);
-  };
+  }
 
-  remove(){
+  remove() {
     this.#element.remove();
-  };
+  }
 
-  getElement = ()=>this.#element;
+  getElement = () => this.#element;
 }

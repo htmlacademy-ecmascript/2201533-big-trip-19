@@ -1,11 +1,10 @@
 import Sorting from '../view/sorting.js';
 import Filters from '../view/filters.js';
 import Info from '../view/info.js';
-import {render, RenderPosition} from '../render.js';
-import ListPoints from '../view/list-points.js';
-import {ACTIONS} from '../setings';
+import {render, RenderPosition} from '../view/render.js';
+import ListPoints from '../view/list/list-points.js';
 
-export default class Presenter{
+export default class Presenter {
   #sort;
   #filter;
   #filterMode;
@@ -13,24 +12,27 @@ export default class Presenter{
   #model;
   #list;
   #eventAddButton;
+  #sortContainer;
+  #infoContainer;
   #onChangeFilter = (mode) => {
     this.#filterMode = mode;
     this.#list.filterPoints(this.#filterMode);
   };
-  #sortContainer;
-  #infoContainer;
+
   constructor(model) {
     this.#model = model;
     this.#sort = new Sorting();
     this.#filter = new Filters(this.#onChangeFilter);
     this.#info = new Info();
-  };
+  }
+
   #recalc = () => {
     if (this.#model.points.length) {
-      this.#info.data = this.#model.info.data
+      this.#info.data = this.#model.info.data;
       render(this.#info, this.#infoContainer, RenderPosition.AFTERBEGIN);
     }
   };
+
   start = () => {
     this.#sortContainer = document.querySelector('.trip-events');
     const filterContainer = document.querySelector('.trip-controls__filters');
@@ -39,11 +41,11 @@ export default class Presenter{
     this.#eventAddButton = document.querySelector('.trip-main__event-add-btn');
     this.#eventAddButton.disabled = true;
     this.#model.init(() => {
-      if (this.#model.points.length){
+      if (this.#model.points.length) {
         render(this.#sort, this.#sortContainer, RenderPosition.AFTERBEGIN);
       }
       this.#recalc();
-      this.#list = new ListPoints(this.#model, this.#actions);
+      this.#list = new ListPoints(this.#model);
       this.#list.onSubmit = this.onSubmit;
       this.#list.init();
       this.#list.onChangeFavourite = this.onChangeFavourite;
@@ -62,10 +64,12 @@ export default class Presenter{
   };
 
   onSubmit = (mode, point, onSuccess, onError) => {
-    this.#model[ACTIONS[mode].direct](point, (options) => {
+    if (this.#model[mode.direct](point, (options) => {
       this.#info.data = this.#model.info.data;
       onSuccess(options);
-    }, onError);
+    }, onError)){
+      this.#list.hideForm();
+    }
   };
 
   onCloseAddForm = () => {
@@ -73,29 +77,23 @@ export default class Presenter{
   };
 
   onChangeFavourite = (point) => {
-    this.#model.changeFavourite(point, this.#list.changeFavourite, this.#actions.doNothing);
+    this.#model.changeFavourite(point, this.#list.changeFavourite);
   };
 
   onSort = (id, order) => {
     this.#list.sort(id, order);
   };
 
-  #actions = {
-    doNothing: (source)=>{
-      console.log(source);
-    },
-  };
-
-  #renderSort = (invisible)=>{
-    if (invisible){
+  #renderSort = (invisible) => {
+    if (invisible) {
       this.#sort.getElement().remove();
     }
-    else{
+    else {
       render(this.#sort, this.#sortContainer, RenderPosition.AFTERBEGIN);
     }
   };
 
-  #onChangeListState = (emptyList)=>{
+  #onChangeListState = (emptyList) => {
     this.#renderSort(emptyList);
   };
 }

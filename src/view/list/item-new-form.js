@@ -1,14 +1,16 @@
 import Item from './item';
+import {SubmitMode} from '../../setings';
 
-export default class ItemNewForm extends Item{
+export default class ItemNewForm extends Item {
   list;
   #point;
   #onSubmit;
   #onCancel;
-  constructor(form){
+
+  constructor(form) {
     super(form);
     this.element.append(this.form.getElement());
-  };
+  }
 
   showForm = () => {
     super.prepareForm(this);
@@ -18,21 +20,21 @@ export default class ItemNewForm extends Item{
     this.list.prepend(this.element);
   };
 
-  cancel(){
+  cancel() {
     this.hideForm();
-  };
+  }
 
-  submit(){
-    this.#onSubmit('add', this.form.point);
-  };
+  submit() {
+    this.#onSubmit(SubmitMode.ADD, this.form.point);
+  }
 
-  set onCancel(onCancel){
+  set onCancel(onCancel) {
     this.#onCancel = onCancel;
   }
 
-  set onSubmit(onSubmit){
+  set onSubmit(onSubmit) {
     this.#onSubmit = onSubmit;
-  };
+  }
 
   hideForm = () => {
     this.element.remove();
@@ -41,7 +43,7 @@ export default class ItemNewForm extends Item{
     this.#onCancel();
   };
 
-  set point(point){
+  set point(point) {
     this.#point = point;
   }
 }

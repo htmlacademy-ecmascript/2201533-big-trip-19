@@ -2,7 +2,11 @@ import dayjs from 'dayjs';
 
 export default class Point {
   #fullPrice;
-  get pricePoint(){return this.#fullPrice};
+
+  get pricePoint() {
+    return this.#fullPrice;
+  }
+
   constructor(
     basePrice = 0,
     dateFrom = dayjs(),
@@ -20,13 +24,13 @@ export default class Point {
     this.isFavorite = isFavorite;
     this.offers = offers;
     this.type = type;
-  };
+  }
 
   #newKey = (oldKey) => {
     let newKey = oldKey;
-    for (let char of newKey) {
+    for (const char of newKey) {
       if (char === char.toUpperCase()) {
-        newKey = newKey.replace(char, `_${char.toLowerCase()}`)
+        newKey = newKey.replace(char, `_${char.toLowerCase()}`);
       }
     }
     return newKey;
@@ -40,34 +44,32 @@ export default class Point {
       }
     }
     return pointAs;
-  };
+  }
 
-  get forAlterPoint (){
+  get forAlterPoint() {
     const fields = [];
-    for(const [key, value] of Object.entries(this)){
-      if (typeof(value) !== 'function'){
-        if (key === 'id'){
+    for (const [key, value] of Object.entries(this)) {
+      if (typeof (value) !== 'function') {
+        if (key === 'id') {
           fields.push(`"id": "${JSON.stringify(value)}"`);
-        }
-        else{
+        } else {
           fields.push(`${JSON.stringify(this.#newKey(key))}: ${JSON.stringify(value)}`);
         }
       }
     }
     return `{${fields.join(', ')}}`;
-  };
+  }
 
-  equalField = (point, key)=>{
-    if (key === 'offers'){
-      if (point.offers.length !== this.offers.length){
+  equalField = (point, key) => {
+    if (key === 'offers') {
+      if (point.offers.length !== this.offers.length) {
         return false;
       }
-      return point.offers.every(value => this.offers.includes(value));
-    }
-    else{
+      return point.offers.every((value) => this.offers.includes(value));
+    } else {
       return point[key] === this[key];
     }
-  }
+  };
 
   equal = (point) => {
     for (const [key] of Object.entries(this)) {
@@ -78,10 +80,10 @@ export default class Point {
     return true;
   };
 
-  alter = (point)=>{
+  alter = (point) => {
     const alter = [];
     for (const [key, value] of Object.entries(point)) {
-      if (!this.equalField(point, key)){
+      if (!this.equalField(point, key)) {
         this[key] = value;
         alter.push(key);
       }
@@ -89,25 +91,23 @@ export default class Point {
     return alter;
   };
 
-  copy(){
-    if (this.id === -1){
+  copy() {
+    if (this.id === -1) {
       return this;
     }
     const point = new Point();
     for (const [key, value] of Object.entries(this)) {
-      if (key === 'offers'){
+      if (key === 'offers') {
         point.offers = Array.from(this.offers);
-      }
-      else{
+      } else {
         point[key] = value;
       }
     }
     return point;
-  };
+  }
 
-  recalc(owner){
-    this.#fullPrice = this.offers.reduce((accumulator, currentValue) =>{
-      return accumulator + owner.typeOfOffers[this.type].find((offer) => offer.id === currentValue).price}
-    , this.basePrice);
+  recalc(owner) {
+    this.#fullPrice = this.offers.reduce((accumulator, currentValue) => accumulator + owner.typeOfOffers[this.type].find((offer) => offer.id === currentValue).price
+      , this.basePrice);
   }
 }
