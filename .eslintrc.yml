@@ -5,5 +5,9 @@ parserOptions:
 env:
   es2017: true
   browser: true
+  amd: true
+
+rules:
+  accessor-pairs: off
 
 extends: 'htmlacademy/vanilla'

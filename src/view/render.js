@@ -1,3 +1,5 @@
+import DOMPurify from 'dompurify';
+
 const RenderPosition = {
   BEFOREBEGIN: 'beforebegin',
   AFTERBEGIN: 'afterbegin',
@@ -12,8 +14,12 @@ function createElement(template) {
   return newElement.firstElementChild;
 }
 
+function createElementSan(template){
+  return createElement(DOMPurify.sanitize(template));
+}
+
 function render(component, container, place = RenderPosition.BEFOREEND) {
   container.insertAdjacentElement(place, component.getElement());
 }
 
-export {RenderPosition, createElement, render};
+export {RenderPosition, createElement, render, createElementSan};
