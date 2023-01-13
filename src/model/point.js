@@ -3,10 +3,6 @@ import dayjs from 'dayjs';
 export default class Point {
   #fullPrice;
 
-  get pricePoint() {
-    return this.#fullPrice;
-  }
-
   constructor(
     basePrice = 0,
     dateFrom = dayjs(),
@@ -26,15 +22,9 @@ export default class Point {
     this.type = type;
   }
 
-  #newKey = (oldKey) => {
-    let newKey = oldKey;
-    for (const char of newKey) {
-      if (char === char.toUpperCase()) {
-        newKey = newKey.replace(char, `_${char.toLowerCase()}`);
-      }
-    }
-    return newKey;
-  };
+  get pricePoint() {
+    return this.#fullPrice;
+  }
 
   get localPoint() {
     const pointAs = {};
@@ -107,7 +97,18 @@ export default class Point {
   }
 
   recalc(owner) {
-    this.#fullPrice = this.offers.reduce((accumulator, currentValue) => accumulator + owner.typeOfOffers[this.type].find((offer) => offer.id === currentValue).price
+    this.#fullPrice = this.offers.reduce((accumulator, currentValue) =>
+        accumulator + owner.typeOfOffers[this.type].find((offer) => offer.id === currentValue).price
       , this.basePrice);
   }
+
+  #newKey = (oldKey) => {
+    let newKey = oldKey;
+    for (const char of newKey) {
+      if (char === char.toUpperCase()) {
+        newKey = newKey.replace(char, `_${char.toLowerCase()}`);
+      }
+    }
+    return newKey;
+  };
 }

@@ -1,14 +1,13 @@
-import {createElement} from '../render.js';
 import EditFormView from '../form/edit-form.js';
 import dayjs from 'dayjs';
-import {RenderPosition} from '../render.js';
-import {PromptTexts} from '../../setings';
+import {createElement, RenderPosition} from '../render.js';
+import {FormFields, PromptTexts} from '../../settings';
 import ItemRollup from './item-rollup';
 import Point from '../../model/point';
 import ItemNewForm from './item-new-form';
 
 export default class ListPoints {
-  #TEMPL = '<ul class="trip-events__list"></ul>';
+  #TEMPLATE = '<ul class="trip-events__list"></ul>';
   #element;
   #model;
   #points;
@@ -19,7 +18,11 @@ export default class ListPoints {
   #onChangeState;
   #list;
   #prompt;
-  #onChangeFavourite;
+  #onChangeFavorite;
+
+  #onError = () => {
+    this.#form.owner.shakeHead();
+  };
 
   newEvent = () => {
     this.#itemNewPoint.point = new Point();
@@ -27,8 +30,8 @@ export default class ListPoints {
     this.#setElement();
   };
 
-  set onChangeFavourite(onChangeFavourite) {
-    this.#onChangeFavourite = onChangeFavourite;
+  set onChangeFavorite(onChangeFavorite) {
+    this.#onChangeFavorite = onChangeFavorite;
   }
 
   set onChangeState(onChangeState) {
@@ -66,15 +69,16 @@ export default class ListPoints {
     }
   };
 
-  filterPoints = (mode) => {
+  filterPoints = (mode, sortMode) => {
     this.#points = this.#model.pointsFilter(mode, dayjs());
+    this.#points.sort(sortMode);
     this.#fillList();
     this.#prompt.textContent = PromptTexts[mode];
     this.#setElement();
   };
 
-  sort(mode, order) {
-    this.#points.sort[mode](order);
+  sort(options) {
+    this.#points.sort(options);
     this.#fillList();
   }
 
@@ -91,8 +95,8 @@ export default class ListPoints {
       this.#model.destinations[point.destination].name,
       point.offers.length > 0 ? this.#model.getOffers(point.type, point.offers) : false,
     );
-    item.routePoint.favouriteButton.getElement().addEventListener('click', () => {
-      this.#onChangeFavourite(point);
+    item.routePoint.favoriteButton.getElement().addEventListener('click', () => {
+      this.#onChangeFavorite(point);
     });
     item.onSubmit = this.#onSubmit;
     this.#items[point.id] = item;
@@ -118,13 +122,25 @@ export default class ListPoints {
     const point = options.point;
     const alter = options.alter;
     const destination = this.#model.destinations[point.destination].name;
-    const offers = alter.includes('offers') && point.offers.length > 0 ?
+    const offers = alter.includes(FormFields.OFFERS) && point.offers.length > 0 ?
       this.#model.getOffers(point.type, point.offers) : false;
-    if (alter.includes('dateFor') || alter.includes('dateTo')) {
-      alter.push('duration');
+    if (alter.includes(FormFields.DATE_FROM) || alter.includes(FormFields.DATE_TO)) {
+      alter.push(FormFields.DURATION);
     }
-    if (alter.includes('destination') || alter.includes('type')) {
-      alter.push('title');
+    if (alter.includes(FormFields.DESTINATION) || alter.includes(FormFields.TYPE)) {
+      alter.push(FormFields.TITLE);
+    }
+    const relocationOptions = this.#points.relocation(point, alter);
+    if (relocationOptions) {
+      const item = this.#items[relocationOptions.delete].getElement();
+      item.remove();
+      if (relocationOptions.before){
+        const before = this.#items[relocationOptions.before].getElement();
+        this.#list.insertBefore(item, before);
+      }
+      else {
+        this.#list.append(item);
+      }
     }
     this.#form.owner.point = point;
     this.#form.owner.routePoint.update(point, alter, destination, offers);
@@ -135,8 +151,8 @@ export default class ListPoints {
     this.#form.owner.hideForm();
   }
 
-  changeFavourite = (point) => {
-    this.#items[point.id].routePoint.favouriteButton.state = point.isFavorite;
+  changeFavorite = (point) => {
+    this.#items[point.id].routePoint.favoriteButton.state = point.isFavorite;
   };
 
   deleteItem = (options) => {
@@ -147,9 +163,29 @@ export default class ListPoints {
     this.#setElement();
   };
 
+  #blockInterface (block){
+    for (let i in this.#items) {
+      this.#items[i].disabled = block;
+    }
+    //this.#form.getElement().disabled = block;
+    this.#form.disabled = block;
+  }
+
   set onSubmit(onSubmit) {
-    this.#onSubmit = (mode, point) => {
-      onSubmit(mode, point, this[mode.back], console.log);
+    this.#onSubmit = (mode, point, button) => {
+      button.textContent = mode.directText;
+      this.#blockInterface(true);
+      setTimeout(() =>
+        onSubmit(mode, point, (options) => {
+        button.textContent = mode.backText;
+        this.#blockInterface(false);
+        this[mode.back](options);
+        }, () => {
+          button.textContent = mode.backText;
+          this.#blockInterface(false);
+          this.#onError();
+        }), 150000
+      )
     };
   }
 
@@ -169,9 +205,9 @@ export default class ListPoints {
 
   constructor(model) {
     this.#model = model;
-    this.#list = createElement(this.#TEMPL);
+    this.#list = createElement(this.#TEMPLATE);
     this.#prompt = createElement('<p class="trip-events__msg"></p>');
-    this.#form = new EditFormView(this.#model.types(), this.#model.destinations, this.#model.typeOfOffers);
+    this.#form = new EditFormView(this.#model.types, this.#model.destinations, this.#model.typeOfOffers);
   }
 
   getElement = () => this.#element;

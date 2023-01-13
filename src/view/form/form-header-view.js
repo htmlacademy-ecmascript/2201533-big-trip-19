@@ -4,6 +4,7 @@ import FormDestinationsGroup from './form-destinations-group';
 import FormTimeGroup from './form-time-group';
 import FormPriceGroup from './form-price-group';
 import RollupButton from '../list/rollup-btn';
+import {SubmitMode} from '../../settings';
 
 export default class FormHeaderView {
   #element;
@@ -46,7 +47,7 @@ export default class FormHeaderView {
   }
 
   update(point) {
-    this.#buttonCancel.textContent = 'Delete';
+    this.#buttonCancel.textContent = SubmitMode.DELETE.backText;
     this.#wrapper.type = point.type;
     this.#groupDestination.type = point.type;
     this.#groupDestination.name = this.#destinations[point.destination].name;
@@ -92,9 +93,19 @@ export default class FormHeaderView {
     return this.#buttonRollUp.getElement();
   }
 
-  renderRollUp() {
-    this.#buttonRollUp.render(this.#element);
+  set disabled(disabled) {
+    this.#buttonCancel.disabled = disabled;
+    this.#buttonSubmit.disabled = disabled;
+    this.#buttonRollUp.getElement().disabled = disabled;
+    this.#wrapper.disabled = disabled;
+    this.#groupDestination.disabled = disabled;
+    this.#groupDate.disabled = disabled;
+    this.#groupPrice.disabled = disabled;
   }
 
   getElement = () => this.#element;
+
+  renderRollUp() {
+    this.#buttonRollUp.render(this.#element);
+  }
 }

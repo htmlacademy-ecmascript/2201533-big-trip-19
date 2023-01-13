@@ -1,13 +1,13 @@
 import {createElement} from './render.js';
-import {DIFF_CLICK, SortAttrs} from '../setings';
+import {DIFF_CLICK, SortAttrs} from '../settings';
 import dayjs from 'dayjs';
 
 class SortItemLabel {
-  #TEMPL = '<label class="trip-sort__btn"></label>';
+  #TEMPLATE = '<label class="trip-sort__btn"></label>';
   #element;
 
   constructor(attr, id) {
-    this.#element = createElement(this.#TEMPL);
+    this.#element = createElement(this.#TEMPLATE);
     this.#element.htmlFor = id;
     this.#element.textContent = attr.title;
   }
@@ -16,11 +16,11 @@ class SortItemLabel {
 }
 
 class SortItemInput {
-  #TEMPL = '<input class="trip-sort__input  visually-hidden" type="radio" name="trip-sort">';
+  #TEMPLATE = '<input class="trip-sort__input  visually-hidden" type="radio" name="trip-sort">';
   #element;
 
   constructor(attr, id) {
-    this.#element = createElement(this.#TEMPL);
+    this.#element = createElement(this.#TEMPLATE);
     this.#element.id = id;
     this.#element.value = id;
     this.#element.disabled = attr.disabled;
@@ -33,13 +33,13 @@ class SortItemInput {
 class SortItem {
   #CLASS_PREF = 'trip-sort__item--';
   #ID_PREF = 'sort-';
-  #TEMPL = '<div class="trip-sort__item"></div>';
+  #TEMPLATE = '<div class="trip-sort__item"></div>';
   #element;
   #input;
 
   constructor(item) {
     const id = `${this.#ID_PREF}${item.name}`;
-    this.#element = createElement(this.#TEMPL);
+    this.#element = createElement(this.#TEMPLATE);
     this.#element.classList.add(`${this.#CLASS_PREF}${item.name}`);
     this.#input = new SortItemInput(item, id).getElement();
     this.#element.append(this.#input);
@@ -62,6 +62,7 @@ export default class Sorting {
   #TEMPL = '<form class="trip-events__trip-sort  trip-sort" action="#" method="get"></form>';
   #element;
   #onChange;
+  #defaultInput;
 
   constructor() {
     this.#element = createElement(this.#TEMPL);
@@ -74,14 +75,34 @@ export default class Sorting {
           this.#currentOrder =
             item === this.#currentField ? this.#currentOrder * -1 : item.order;
           this.#currentField = item;
-          this.#onChange(this.#currentField.name, this.#currentOrder);
+          this.#onChange(this.currentMode);
         }
       });
+      if (item.checked){
+        this.#defaultInput = sortItem.input;
+      }
     });
+  }
+
+  reset() {
+    if (this.#currentField === SortAttrs.DAY){
+      return false;
+    }
+    this.#currentField = SortAttrs.DAY;
+    this.#currentOrder = this.#currentField.order;
+    this.#defaultInput.checked = true;
+    return true;
   }
 
   set onChange(onChange) {
     this.#onChange = onChange;
+  }
+
+  get currentMode() {
+    return {
+      field: this.#currentField,
+      order: this.#currentOrder
+    };
   }
 
   getElement = () => this.#element;

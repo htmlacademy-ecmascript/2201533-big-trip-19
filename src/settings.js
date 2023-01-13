@@ -4,18 +4,28 @@ const Icons = {
   DEFAULT: 'img/logo.png'
 };
 
-
 const Order = {
   UP: 1,
   DOWN: -1,
   NOT: 0
 };
 
+const FormFields = {
+  DATE_FROM: 'dateFrom',
+  DATE_TO: 'dateTo',
+  OFFERS: 'offers',
+  DURATION: 'duration',
+  DESTINATION: 'destination',
+  TYPE: 'type',
+  TITLE: 'title',
+  PRICE: 'basePrice'
+};
+
 const SortAttrs = {
-  DAY: {name: 'day', title: 'Day', disabled: false, checked: true, order: Order.UP},
+  DAY: {name: 'day', title: 'Day', disabled: false, checked: true, order: Order.UP, field: FormFields.DATE_FROM},
   EVENT: {name: 'event', title: 'Event', disabled: true, order: Order.NOT},
-  TIME: {name: 'time', title: 'Time', disabled: false, order: Order.DOWN},
-  PRICE: {name: 'price', title: 'Price', disabled: false, order: Order.DOWN},
+  TIME: {name: 'time', title: 'Time', disabled: false, order: Order.DOWN, field: FormFields.DURATION},
+  PRICE: {name: 'price', title: 'Price', disabled: false, order: Order.DOWN, field: FormFields.PRICE},
   OFFER: {name: 'offer', title: 'Offer', disabled: true, order: Order.NOT}
 };
 
@@ -38,17 +48,29 @@ const PromptTexts = {
 const SubmitMode = {
   ADD: {
     direct: 'post',
-    back: 'addPoint'
+    back: 'addPoint',
+    directText: 'Saving',
+    backText: 'Save'
   },
   ALTER: {
     direct: 'put',
-    back: 'alterPoint'
+    back: 'alterPoint',
+    directText: 'Saving',
+    backText: 'Save'
   },
   DELETE: {
     direct: 'deletePoint',
-    back: 'deleteItem'
+    back: 'deleteItem',
+    directText: 'Deleting',
+    backText: 'Delete'
   },
 };
 
-export {Icons, Order, PromptTexts, SubmitMode, FilterAttrs, SortAttrs, DIFF_CLICK};
-//https://codernet.ru/articles/js/kak_osushhestvit_dvizhenie_obektov_v_javascript_instrukcziya_s_primerami/
+const SHAKING_PARAM = {
+  amplitude: 40,
+  count: 3,
+  duration: 500
+};
+
+export {Icons, Order, PromptTexts, SubmitMode, FilterAttrs, SortAttrs, DIFF_CLICK, SHAKING_PARAM, FormFields};
+

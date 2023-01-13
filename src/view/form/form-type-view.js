@@ -1,31 +1,33 @@
 import {createElement, createElementSan} from '../render';
-import {Icons} from '../../setings';
+import {Icons} from '../../settings';
 
 export default class FormTypeView {
   #onChange;
   #element;
   #iconType;
-  #iconDefault;
   #items = {};
   #type;
+  #buttonType;
+  #fieldSet;
+  #input;
+  #disabled;
 
   constructor(types) {
     const typeTitle = (type) => type ? `${type[0].toUpperCase()}${type.slice(1)}` : '';
-    this.#element = createElement(
-      `<div class="event__type-wrapper">
-      <input class="event__type-toggle  visually-hidden" id="event-type-toggle" type="checkbox">
-    </div>
-    `);
-    const buttonType = createElement(
+    this.#element = createElement('<div class="event__type-wrapper"></div>');
+    this.#input = createElement(
+      '<input class="event__type-toggle  visually-hidden" id="event-type-toggle" type="checkbox">');
+    this.#element.append(this.#input);
+    this.#buttonType = createElement(
       `<label class="event__type  event__type-btn" for="event-type-toggle">
         <span class="visually-hidden">Choose event type</span>
       </label>
     `);
     this.#iconType = createElementSan(`<img class="event__type-icon" width="17" height="17"
       src="${Icons.DEFAULT}" alt="Event type icon">`);
-    buttonType.append(this.#iconType);
+    this.#buttonType.append(this.#iconType);
     const listTypes = createElement('<div class="event__type-list"></div>');
-    const fieldSet = createElement(
+    this.#fieldSet = createElement(
       `<fieldset class="event__type-group">
         <legend class="visually-hidden">Event type</legend>
       </fieldset>`);
@@ -40,17 +42,20 @@ export default class FormTypeView {
         </div>`
       );
       container.prepend(this.#items[type]);
-      fieldSet.append(container);
+      this.#fieldSet.append(container);
     });
 
-    fieldSet.addEventListener('change', (evt) => {
+    this.#fieldSet.addEventListener('change', (evt) => {
       this.#type = evt.target.value;
       listTypes.style.display = 'none';
       this.#iconType.src = `${Icons.PATH}${this.#type}${Icons.EXT}`;
       this.#onChange(this.#type);
     });
 
-    buttonType.addEventListener('click', () => {
+    this.#buttonType.addEventListener('click', () => {
+      if (this.#disabled) {
+        return;
+      }
       const states = {
         block: 'none',
         none: 'block',
@@ -59,8 +64,8 @@ export default class FormTypeView {
       listTypes.style.display = states[listTypes.style.display];
     });
 
-    listTypes.append(fieldSet);
-    this.#element.append(buttonType);
+    listTypes.append(this.#fieldSet);
+    this.#element.append(this.#buttonType);
     this.#element.append(listTypes);
   }
 
@@ -76,6 +81,12 @@ export default class FormTypeView {
     this.#type = type;
     this.#iconType.src = `${Icons.PATH}${type}${Icons.EXT}`;
     this.#items[type].checked = true;
+  }
+
+  set disabled(disabled) {
+    this.#disabled = disabled;
+    this.#input.disabled = disabled;
+    this.#fieldSet.disabled = disabled;
   }
 
   set onChange(onChange) {

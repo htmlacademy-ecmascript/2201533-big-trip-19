@@ -33,5 +33,9 @@ export default class FormPriceGroup {
     this.#onChange = onChange;
   }
 
+  set disabled(disabled) {
+    this.#input.disabled = disabled;
+  }
+
   getElement = () => this.#element;
 }

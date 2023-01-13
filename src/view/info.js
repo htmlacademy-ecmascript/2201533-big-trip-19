@@ -8,12 +8,6 @@ export default class Info {
   #dates;
   #cost;
 
-  set data(dataInfo) {
-    this.#title.textContent = dataInfo.title;
-    this.#dates.textContent = dataInfo.date;
-    this.#cost.textContent = dataInfo.price;
-  }
-
   constructor() {
     this.#infoContainer = createElement('<div class="trip-info__main"></div>');
     this.#costContainer = createElement('<p class="trip-info__cost">Total: € </p>');
@@ -26,6 +20,12 @@ export default class Info {
     this.#costContainer.append(this.#cost);
     this.#element.append(this.#infoContainer);
     this.#element.append(this.#costContainer);
+  }
+
+  set data(dataInfo) {
+    this.#title.textContent = dataInfo.title;
+    this.#dates.textContent = dataInfo.date;
+    this.#cost.textContent = dataInfo.price;
   }
 
   getElement = () => this.#element;

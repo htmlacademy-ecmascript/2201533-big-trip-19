@@ -1,6 +1,6 @@
 import Item from './item';
 import RoutePoint from './route-point';
-import {SubmitMode} from '../../setings';
+import {SubmitMode} from '../../settings';
 
 export default class ItemRollup extends Item {
   #routePoint;
@@ -15,28 +15,6 @@ export default class ItemRollup extends Item {
     this.element.append(this.#routePoint.getElement());
   }
 
-  showForm = () => {
-    super.prepareForm(this);
-    this.form.update(this.#point);
-    this.form.header.renderRollUp();
-    this.routePoint.getElement().replaceWith(this.form.getElement());
-    this.form.header.rollUpButton.addEventListener('click', this.hideForm);
-  };
-
-  cancel() {
-    this.#onSubmit(SubmitMode.DELETE, this.#point);
-  }
-
-  submit() {
-    this.#onSubmit(SubmitMode.ALTER, this.form.point);
-  }
-
-  hideForm = () => {
-    this.form.owner = null;
-    this.form.default();
-    this.form.getElement().replaceWith(this.routePoint.getElement());
-  };
-
   set onSubmit(onSubmit) {
     this.#onSubmit = onSubmit;
   }
@@ -45,7 +23,34 @@ export default class ItemRollup extends Item {
     this.#point = point;
   }
 
+  set disabled(disabled) {
+    this.#routePoint.rollupButton.disabled = disabled;
+  }
+
   get routePoint() {
     return this.#routePoint;
   }
+
+  showForm = () => {
+    super.prepareForm(this);
+    this._form.update(this.#point);
+    this._form.header.renderRollUp();
+    this.routePoint.getElement().replaceWith(this._form.getElement());
+    this._form.header.rollUpButton.addEventListener('click', this.hideForm);
+    super.showForm();
+  };
+
+  cancel() {
+    this.#onSubmit(SubmitMode.DELETE, this.#point, this._form.buttonCancel);
+  }
+
+  submit() {
+    this.#onSubmit(SubmitMode.ALTER, this._form.point, this._form.buttonSubmit);
+  }
+
+  hideForm = () => {
+    this._form.owner = null;
+    this._form.default();
+    this._form.getElement().replaceWith(this.routePoint.getElement());
+  };
 }

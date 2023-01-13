@@ -7,8 +7,12 @@ export default class Rest {
     destinations: 'destinations',
     offers: 'offers'
   };
-
   #randomString;
+
+  constructor() {
+    this.#randomString = new RandomString().get();
+  }
+
   #get = (endpoint, onSuccess, onError) => {
     const url = `${this.#BASE_URL}${endpoint}`;
     fetch(url, {
@@ -101,7 +105,4 @@ export default class Rest {
     }
   };
 
-  constructor() {
-    this.#randomString = new RandomString().get();
-  }
 }

@@ -24,6 +24,29 @@ export default class Model {
     offers: false,
     check: () => this.#loaded.points && this.#loaded.destinations && this.#loaded.offers
   };
+  #filters = {
+    everything: () => true,
+    future: (point) => point.dateFrom > this.#filters.currentDate,
+    present: (point) => point.dateFrom <= this.#filters.currentDate && point.dateTo >= this.#filters.currentDate,
+    past: (point) => point.dateTo < this.#filters.currentDate
+  };
+
+  constructor(rest) {
+    this.#rest = rest;
+    this.#points = new Points();
+    this.#destinations = new Destinations();
+    this.#info = new TripInfo();
+  }
+
+  init = (onLoad) => {
+    this.#onLoad = () => {
+      this.#info.recalc(this);
+      onLoad();
+    };
+    this.#rest.GET.points(this.#load.points, this.#onErrorLoad);
+    this.#rest.GET.destinations(this.#load.destinations, this.#onErrorLoad);
+    this.#rest.GET.offers(this.#load.offers, this.#onErrorLoad);
+  };
 
   #load = {
     points: (json) => {
@@ -55,19 +78,34 @@ export default class Model {
     }
   };
 
-  #onErrorLoad = () => {
-    //Не знаю, пока, что тут делать.
+  #onErrorLoad = (msg) => {
+    console.log(msg);
   };
 
-  init = (onLoad) => {
-    this.#onLoad = () => {
-      this.#info.recalc(this);
-      onLoad();
-    };
-    this.#rest.GET.points(this.#load.points, this.#onErrorLoad);
-    this.#rest.GET.destinations(this.#load.destinations, this.#onErrorLoad);
-    this.#rest.GET.offers(this.#load.offers, this.#onErrorLoad);
-  };
+  get destinations() {
+    return this.#destinations;
+  }
+
+  get types(){
+    return Object.keys(this.#typeOfOffers);
+  }
+
+  get typeOfOffers() {
+    return this.#typeOfOffers;
+  }
+
+  get points() {
+    return this.#points;
+  }
+
+  get info() {
+    return this.#info;
+  }
+
+  getOffers = (type, offers) =>
+    Array.from(offers, (id) => this.#typeOfOffers[type].find((element) => element.id === id));
+
+  getPoint = (id) => id > -1 ? this.#points.findID(id) : new Point();
 
   post = (point, onAdd, onError) => {
     this.#rest.POST(point.localPoint, (resp) => {
@@ -94,7 +132,7 @@ export default class Model {
     }, onError);
   };
 
-  changeFavourite = (point, onChange) => {
+  changeFavorite = (point, onChange) => {
     const changedPoint = point.copy();
     changedPoint.isFavorite = !point.isFavorite;
     this.#rest.PUT(changedPoint, () => {
@@ -112,46 +150,10 @@ export default class Model {
     }, onError);
   };
 
-  #filters = {
-    everything: () => true,
-    future: (point) => point.dateFrom > this.#filters.currentDate,
-    present: (point) => point.dateFrom <= this.#filters.currentDate && point.dateTo >= this.#filters.currentDate,
-    past: (point) => point.dateTo < this.#filters.currentDate
-  };
-
   pointsFilter = (mode, currentDate) => {
     this.#filters.currentDate = currentDate;
     const filterPoints = new Points();
     filterPoints.list = this.#points.list.filter((point) => this.#filters[mode](point));
     return filterPoints;
   };
-
-  get destinations() {
-    return this.#destinations;
-  }
-
-  types = () => Object.keys(this.#typeOfOffers);
-
-  getOffers = (type, offers) => Array.from(offers, (id) => this.#typeOfOffers[type].find((element) => element.id === id));
-
-  getPoint = (id) => id > -1 ? this.#points.find(id) : new Point();
-
-  get typeOfOffers() {
-    return this.#typeOfOffers;
-  }
-
-  get points() {
-    return this.#points;
-  }
-
-  get info() {
-    return this.#info;
-  }
-
-  constructor(rest) {
-    this.#rest = rest;
-    this.#points = new Points();
-    this.#destinations = new Destinations();
-    this.#info = new TripInfo();
-  }
 }

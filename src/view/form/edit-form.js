@@ -6,7 +6,7 @@ import FormHeaderView from './form-header-view';
 export default class EditFormView {
   #point;
   #destinations;
-  #TEMPL = `<form class="event event--edit" action="#" method="post">
+  #TEMPLATE = `<form class="event event--edit" action="#" method="post">
               <section class="event__details"></section>
             </form>`;
 
@@ -52,12 +52,11 @@ export default class EditFormView {
     this.header.onChangePrice = (price) => {
       this.#point.basePrice = price;
     };
-    this.#element = createElement(this.#TEMPL);
+    this.#element = createElement(this.#TEMPLATE);
     this.#details = this.#element.querySelector('.event__details');
     this.#element.prepend(this.#header.getElement());
     this.#element.addEventListener('submit', (evt) => {
       evt.preventDefault();
-      this.buttonSubmit.textContent = 'Saving';
       this.owner.submit();
     });
     this.buttonCancel.addEventListener('click', () => {
@@ -72,9 +71,9 @@ export default class EditFormView {
     this.#header.update(point);
     this.#sectionOffers =
       this.#point.type && this.#offers[this.#point.type].length > 0 ?
-        new FormOffersView(this.point.offers, this.#offers[this.point.type]).getElement() : false;
+        new FormOffersView(this.point.offers, this.#offers[this.point.type]) : false;
     if (this.#sectionOffers) {
-      this.#details.append(this.#sectionOffers);
+      this.#details.append(this.#sectionOffers.getElement());
     }
     this.#sectionDestination = destination.description || (destination.pictures.length > 0 && isNew) ?
       new FormDestinationView(destination, isNew).getElement() : false;
@@ -85,7 +84,7 @@ export default class EditFormView {
 
   default() {
     if (this.#sectionOffers) {
-      this.#sectionOffers.remove();
+      this.#sectionOffers.getElement().remove();
       this.#sectionOffers = false;
     }
     if (this.#sectionDestination) {
@@ -115,5 +114,24 @@ export default class EditFormView {
     return this.#header;
   }
 
+  set marginLeft(value) {
+    this.#element.style.marginLeft = `${value}px`;
+  }
+
+  set marginRight(value) {
+    this.#element.style.marginRight = `${value}px`;
+  }
+
+  set disabled(disabled) {
+    this.#header.disabled = disabled;
+    if (this.#sectionOffers) {
+      this.#sectionOffers.disabled = disabled;
+    }
+  }
+
   getElement = () => this.#element;
+
+  clearStyle() {
+    this.#element.style = '';
+  }
 }

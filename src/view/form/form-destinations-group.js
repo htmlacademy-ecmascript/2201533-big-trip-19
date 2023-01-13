@@ -53,6 +53,11 @@ export default class FormDestinationsGroup {
     this.#inputDestination.value = name;
   }
 
+  set disabled(disabled) {
+    console.log(disabled);
+    this.#inputDestination.disabled = disabled;
+  }
+
   set type(type) {
     this.#labelType.textContent = `${type[0].toUpperCase()}${type.slice(1)}`;
   }

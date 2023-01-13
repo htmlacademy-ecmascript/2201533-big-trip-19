@@ -14,10 +14,6 @@ export default class Presenter {
   #eventAddButton;
   #sortContainer;
   #infoContainer;
-  #onChangeFilter = (mode) => {
-    this.#filterMode = mode;
-    this.#list.filterPoints(this.#filterMode);
-  };
 
   constructor(model) {
     this.#model = model;
@@ -26,11 +22,34 @@ export default class Presenter {
     this.#info = new Info();
   }
 
-  #recalc = () => {
-    if (this.#model.points.length) {
+  #onChangeFilter = (mode) => {
+    this.#filterMode = mode;
+    this.#list.filterPoints(this.#filterMode, this.#sort.currentMode);
+  };
+
+  onCloseAddForm = () => {
+    this.#eventAddButton.disabled = false;
+  };
+
+  onChangeFavorite = (point) => {
+    this.#model.changeFavorite(point, this.#list.changeFavorite);
+  };
+
+  onSort = (options) => {
+    this.#list.sort(options);
+  };
+
+  onSubmit = (mode, point, onSuccess, onError) => {
+    if (this.#model[mode.direct](point, (options) => {
       this.#info.data = this.#model.info.data;
-      render(this.#info, this.#infoContainer, RenderPosition.AFTERBEGIN);
+      onSuccess(options);
+    }, onError)){
+      this.#list.hideForm();
     }
+  };
+
+  #onChangeListState = (emptyList) => {
+    this.#renderSort(emptyList);
   };
 
   start = () => {
@@ -48,40 +67,30 @@ export default class Presenter {
       this.#list = new ListPoints(this.#model);
       this.#list.onSubmit = this.onSubmit;
       this.#list.init();
-      this.#list.onChangeFavourite = this.onChangeFavourite;
+      this.#list.onChangeFavorite = this.onChangeFavorite;
       this.#list.onCancel = () => this.onCloseAddForm();
       this.#list.onChangeState = this.#onChangeListState;
       this.#sort.onChange = this.onSort;
-      this.#filter.reset();
+      this.#filter.init();
       this.#eventAddButton.disabled = false;
       this.#eventAddButton.addEventListener('click', () => {
         this.#eventAddButton.disabled = true;
-        this.#filter.reset();
+        let needSort = this.#sort.reset();
+        needSort = needSort && !this.#filter.reset();
+        if (needSort){
+          this.#list.sort(this.#sort.currentMode);
+        }
         this.#list.newEvent();
       });
       render(this.#list, this.#sortContainer);
     });
   };
 
-  onSubmit = (mode, point, onSuccess, onError) => {
-    if (this.#model[mode.direct](point, (options) => {
+  #recalc = () => {
+    if (this.#model.points.length) {
       this.#info.data = this.#model.info.data;
-      onSuccess(options);
-    }, onError)){
-      this.#list.hideForm();
+      render(this.#info, this.#infoContainer, RenderPosition.AFTERBEGIN);
     }
-  };
-
-  onCloseAddForm = () => {
-    this.#eventAddButton.disabled = false;
-  };
-
-  onChangeFavourite = (point) => {
-    this.#model.changeFavourite(point, this.#list.changeFavourite);
-  };
-
-  onSort = (id, order) => {
-    this.#list.sort(id, order);
   };
 
   #renderSort = (invisible) => {
@@ -91,9 +100,5 @@ export default class Presenter {
     else {
       render(this.#sort, this.#sortContainer, RenderPosition.AFTERBEGIN);
     }
-  };
-
-  #onChangeListState = (emptyList) => {
-    this.#renderSort(emptyList);
   };
 }

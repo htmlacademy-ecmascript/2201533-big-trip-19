@@ -48,6 +48,11 @@ export default class FormTimeGroup {
     });
   }
 
+  default() {
+    this.dateFrom = dayjs();
+    this.dateTo = dayjs();
+  }
+
   set dateFrom(date) {
     this.#inputs.dateFrom.value = date.format('DD/MM/YY HH:mm');
   }
@@ -60,9 +65,10 @@ export default class FormTimeGroup {
     this.#onChange = onChange;
   }
 
-  default() {
-    this.dateFrom = dayjs();
-    this.dateTo = dayjs();
+  set disabled(disabled) {
+    for (let i in this.#inputs){
+      this.#inputs[i].disabled = disabled;
+    }
   }
 
   getElement = () => this.#element;

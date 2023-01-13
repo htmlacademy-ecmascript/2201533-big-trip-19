@@ -1,4 +1,4 @@
-import {Order} from '../setings';
+import {FormFields} from '../settings';
 
 export default class TripInfo {
   #uniqDestinations;
@@ -8,26 +8,32 @@ export default class TripInfo {
   #points;
   #model;
 
-  #setStartPoint() {
-    this.#points.sort.dateFor();
-    this.#startPoint = this.#points.list[0];
-  }
-
-  #setEndPoint() {
-    this.#points.sort.dateTo(Order.DOWN);
-    this.#endPoint = this.#points.list[0];
-  }
-
-  #setUniqDestinations() {
-    this.#uniqDestinations = new Set(Array.from(this.#points.list, (point) => point.destination));
-  }
-
   init(model) {
     this.#model = model;
     this.#points = model.points;
     this.#setEndPoint();
     this.#setStartPoint();
     this.#setUniqDestinations();
+  }
+
+  get data() {
+    return {
+      title: this.#infoTitle(),
+      date: this.#infoDate(),
+      price: this.#fullPrice
+    };
+  }
+
+  #setStartPoint() {
+    this.#startPoint = this.#points.start;
+  }
+
+  #setEndPoint() {
+    this.#endPoint = this.#points.end;
+  }
+
+  #setUniqDestinations() {
+    this.#uniqDestinations = new Set(Array.from(this.#points.list, (point) => point.destination));
   }
 
   recalc(model) {
@@ -62,10 +68,10 @@ export default class TripInfo {
   }
 
   afterAlter(point, alter, delta) {
-    if (alter.includes('dateFrom') || alter.includes('dateTo')) {
+    if (alter.includes(FormFields.DATE_FROM) || alter.includes(FormFields.DATE_TO)) {
       this.#checkExtreme(point);
     }
-    if (alter.includes('destination')) {
+    if (alter.includes(FormFields.DESTINATION)) {
       this.#setUniqDestinations();
     }
     this.#fullPrice += delta;
@@ -93,13 +99,5 @@ export default class TripInfo {
     }
     // eslint-disable-next-line no-irregular-whitespace
     return `${start.format('MMM DD')} — ${end.format('DD')}`;
-  }
-
-  get data() {
-    return {
-      title: this.#infoTitle(),
-      date: this.#infoDate(),
-      price: this.#fullPrice
-    };
   }
 }

@@ -1,11 +1,41 @@
 import {newPointFromJson} from './from-json';
-import {Order} from '../setings';
 
 export default class Points {
   #list = [];
+  #options;
+  constructor() {}
 
-  constructor() {
+  #compare = {
+    date: (a, b) => {
+      const diff = a.diff(b);
+      return Math.round(diff / Math.abs(diff));
+    },
+    dateFrom: (a, b) => this.#compare.date(a.dateFrom, b.dateFrom),
+    dateTo: (a,b) => this.#compare.date(a.dateTo, b.dateTo),
+    duration: (a, b) => {
+      const diff = a.dateTo.diff(a.dateFrom) - b.dateTo.diff(b.dateFrom);
+      return Math.round(diff / Math.abs(diff));
+    },
+    basePrice: (a, b) => {
+      const diff = a.basePrice - b.basePrice;
+      return Math.round(diff / Math.abs(diff));
+    }
+  };
 
+  get length() {
+    return this.#list.length;
+  }
+
+  get start() {
+    const list = Array.from(this.#list, (v, k) => ({key: k, date: v.dateFrom}));
+    list.sort((a, b) => this.#compare.date(a.date, b.date));
+    return this.#list[list[0].key];
+  }
+
+  get end() {
+    const list = Array.from(this.#list, (v, k) => ({key: k, date: v.dateFrom}));
+    list.sort((a, b) => this.#compare.date(b.date, a.date));
+    return this.#list[list[0].key];
   }
 
   get list() {
@@ -24,7 +54,7 @@ export default class Points {
     this.#list.splice(this.#list.findIndex((point) => point.id === id), 1);
   }
 
-  find(id) {
+  findID(id) {
     return this.#list.find((element) => element.id === id);
   }
 
@@ -32,34 +62,29 @@ export default class Points {
     this.#list.push(point);
   }
 
-  get length() {
-    return this.#list.length;
+  relocation(point, alter){
+    if (alter.includes(this.#options.field.field))
+    {
+      const options = {};
+      const deleteIndex = this.#list.findIndex((element) => element.id === point.id);
+      options.delete = this.#list[deleteIndex].id;
+      this.#list.splice(deleteIndex, 1);
+      const beforeIndex = this.#list.findIndex((element) =>
+        this.#compare[this.#options.field.field](element, point) * this.#options.order === 1);
+      options.before = beforeIndex === -1 ? false : this.#list[beforeIndex].id;
+      this.#list.splice(beforeIndex, 0, point);
+      return options;
+    }
+    return false;
   }
 
-  sort = {
-    dateFor: (order = Order.UP) => this.#list.sort((a, b) =>
-      // eslint-disable-next-line no-nested-ternary
-      (a.dateFrom === b.dateFrom ? 0 : a.dateFrom > b.dateFrom ? 1 : -1) * order),
+  sort(options){
+    this.#options = options;
+    this.#list.sort((a, b) => this.#compare[options.field.field](a, b) * options.order);
+  }
 
-    dateTo: (order = Order.UP) => this.#list.sort((a, b) =>
-      // eslint-disable-next-line no-nested-ternary
-      (a.dateTo === b.dateTo ? 0 : a.dateTo > b.dateTo ? 1 : -1) * order),
-
-    duration: (order = Order.UP) => this.#list.sort((a, b) => {
-      const diff = a.dateTo.diff(a.dateFrom) - b.dateTo.diff(b.dateFrom);
-      // eslint-disable-next-line no-nested-ternary
-      return (diff === 0 ? 0 : diff > 0 ? 1 : -1) * order;
-    }
-    ),
-
-    basePrice: (order = Order.UP) => this.#list.sort((a, b) =>
-      // eslint-disable-next-line no-nested-ternary
-      (a.basePrice === b.basePrice ? 0 : a.basePrice > b.basePrice ? 1 : -1) * order),
-
-    day: (order) => this.sort.dateFor(order),
-
-    time: (order) => this.sort.duration(order),
-
-    price: (order) => this.sort.basePrice(order),
-  };
+  represent() {
+    return Array.from(this.#list,
+      (point) => `${point.id}, ${point.dateFrom}, ${point.basePrice}`).join('\n');
+  }
 }

@@ -3,6 +3,11 @@ import Destination from './destination';
 
 export default class Destinations {
   #list = [];
+  '-1' = new Destination();
+
+  get list() {
+    return this.#list;
+  }
 
   fillJson(json) {
     json.forEach((destination) => {
@@ -10,11 +15,5 @@ export default class Destinations {
       this.#list.push(dest);
       this[dest.id] = dest;
     });
-  }
-
-  '-1' = new Destination();
-
-  get list() {
-    return this.#list;
   }
 }
