@@ -1,6 +1,6 @@
 import {createElement} from '../render';
 import FormTypeView from './form-type-view';
-import FormDestinationsGroup from './form-destinations-group';
+import HeaderDestinationsView from './header-destinations-view';
 import FormTimeGroup from './form-time-group';
 import FormPriceGroup from './form-price-group';
 import RollupButton from '../point/rollup-btn';
@@ -34,7 +34,7 @@ export default class FormHeaderView {
       this.#onChangeType(type);
     };
     this.#element.append(this.#wrapper.getElement());
-    this.#groupDestination = new FormDestinationsGroup(destinations.list);
+    this.#groupDestination = new HeaderDestinationsView(destinations.list);
     this.#labelType = this.#groupDestination.labelType;
     this.#element.append(this.#groupDestination.getElement());
     this.#groupDate = new FormTimeGroup();

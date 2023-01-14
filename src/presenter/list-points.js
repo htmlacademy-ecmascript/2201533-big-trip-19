@@ -1,4 +1,4 @@
-import EditFormView from '../view/form/edit-form.js';
+import EditFormView from '../view/form/edit-form-view.js';
 import dayjs from 'dayjs';
 import {FormFields, PromptTexts, ViewMode} from '../settings';
 import ItemRollup from '../view/list/item-rollup';

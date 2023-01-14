@@ -1,6 +1,6 @@
 import {createElement, createElementSan} from '../render';
 
-export default class FormDestinationsGroup {
+export default class HeaderDestinationsView {
   #labelType;
   #onChange;
   #destination;
