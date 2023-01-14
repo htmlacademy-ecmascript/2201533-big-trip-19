@@ -2,7 +2,7 @@ import Sorting from '../view/sorting.js';
 import Filters from '../view/filters.js';
 import Info from '../view/info.js';
 import {render, RenderPosition} from '../view/render.js';
-import ListPoints from '../view/list/list-points.js';
+import ListPoints from './list-points.js';
 
 export default class Presenter {
   #sort;
@@ -39,11 +39,23 @@ export default class Presenter {
     this.#list.sort(options);
   };
 
+  #blockInterface(block) {
+    this.#list.blockInterface(block);
+    this.#filter.disabled = block;
+    this.#sort.disabled = block;
+    this.#eventAddButton.disabled = block;
+  }
+
   onSubmit = (mode, point, onSuccess, onError) => {
+    this.#blockInterface(true);
     if (this.#model[mode.direct](point, (options) => {
+      this.#blockInterface(false);
       this.#info.data = this.#model.info.data;
       onSuccess(options);
-    }, onError)){
+    }, () => {
+      this.#blockInterface(false);
+      onError();
+    })) {
       this.#list.hideForm();
     }
   };
@@ -59,14 +71,16 @@ export default class Presenter {
     this.#infoContainer = document.querySelector('.trip-main');
     this.#eventAddButton = document.querySelector('.trip-main__event-add-btn');
     this.#eventAddButton.disabled = true;
+    this.#list = new ListPoints();
+
+    render(this.#list.view, this.#sortContainer);
     this.#model.init(() => {
       if (this.#model.points.length) {
         render(this.#sort, this.#sortContainer, RenderPosition.AFTERBEGIN);
       }
       this.#recalc();
-      this.#list = new ListPoints(this.#model);
       this.#list.onSubmit = this.onSubmit;
-      this.#list.init();
+      this.#list.init(this.#model);
       this.#list.onChangeFavorite = this.onChangeFavorite;
       this.#list.onCancel = () => this.onCloseAddForm();
       this.#list.onChangeState = this.#onChangeListState;
@@ -77,12 +91,13 @@ export default class Presenter {
         this.#eventAddButton.disabled = true;
         let needSort = this.#sort.reset();
         needSort = needSort && !this.#filter.reset();
-        if (needSort){
+        if (needSort) {
           this.#list.sort(this.#sort.currentMode);
         }
         this.#list.newEvent();
       });
-      render(this.#list, this.#sortContainer);
+    }, (errors) => {
+      this.#list.view.showErrors(errors);
     });
   };
 
@@ -96,8 +111,7 @@ export default class Presenter {
   #renderSort = (invisible) => {
     if (invisible) {
       this.#sort.getElement().remove();
-    }
-    else {
+    } else {
       render(this.#sort, this.#sortContainer, RenderPosition.AFTERBEGIN);
     }
   };

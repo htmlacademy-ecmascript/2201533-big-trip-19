@@ -45,6 +45,10 @@ class FilterItem {
 
   getElement = () => this.#element;
 
+  get input() {
+    return this.#input;
+  }
+
   checked = () => {
     this.#input.checked = true;
   };
@@ -53,15 +57,16 @@ class FilterItem {
 export default class Filters {
   #onChangeFilter;
   #ITEMS = [FilterAttrs.EVERYTHING, FilterAttrs.FUTURE, FilterAttrs.PRESENT, FilterAttrs.PAST];
+  #inputs = [];
   #currentFilter;
   #defaultFilter;
   #defaultItem;
-  #TEMPL = '<form class="trip-filters" action="#" method="get"></form>';
+  #TEMPLATE = '<form class="trip-filters" action="#" method="get"></form>';
   #element;
 
   constructor(changeFilter) {
     this.#onChangeFilter = changeFilter;
-    this.#element = createElement(this.#TEMPL);
+    this.#element = createElement(this.#TEMPLATE);
     this.#ITEMS.forEach((item) => {
       const elem = new FilterItem(item);
       this.#element.append(elem.getElement());
@@ -70,6 +75,7 @@ export default class Filters {
         this.#defaultFilter = item.name;
         this.#defaultItem = elem;
       }
+      this.#inputs.push(elem.input);
     });
     this.#element.addEventListener('change', (evt) => {
       this.#currentFilter = evt.target.value;
@@ -90,6 +96,12 @@ export default class Filters {
     this.init();
     return true
   };
+
+  set disabled(disabled) {
+    this.#inputs.forEach((input) => {
+      input.disabled = disabled
+    });
+  }
 
   getElement = () => this.#element;
 }
