@@ -1,5 +1,5 @@
 import Item from './item';
-import RoutePoint from './route-point';
+import RoutePoint from '../point/route-point';
 import {SubmitMode} from '../../settings';
 
 export default class ItemRollup extends Item {
@@ -17,6 +17,10 @@ export default class ItemRollup extends Item {
 
   set onSubmit(onSubmit) {
     this.#onSubmit = onSubmit;
+  }
+
+  get idPoint() {
+    return this.#point.id;
   }
 
   set point(point) {

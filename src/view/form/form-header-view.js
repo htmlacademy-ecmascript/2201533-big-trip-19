@@ -3,7 +3,7 @@ import FormTypeView from './form-type-view';
 import FormDestinationsGroup from './form-destinations-group';
 import FormTimeGroup from './form-time-group';
 import FormPriceGroup from './form-price-group';
-import RollupButton from '../list/rollup-btn';
+import RollupButton from '../point/rollup-btn';
 import {SubmitMode} from '../../settings';
 
 export default class FormHeaderView {

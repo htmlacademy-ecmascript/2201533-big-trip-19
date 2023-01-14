@@ -38,11 +38,16 @@ const FilterAttrs = {
   PAST: {name: 'past', title: 'Past', checked: false}
 };
 
+const ENDPOINT = 'name_of_table';
+
 const PromptTexts = {
   everything: 'Click New Event to create your first point',
   future: 'There are no future events now',
   present: 'There are no present events now',
-  past: 'There are no past events now'
+  past: 'There are no past events now',
+  loading: 'Loading...',
+  error: `Failed to load the "${ENDPOINT}" table
+  Reason: `,
 };
 
 const SubmitMode = {
@@ -72,5 +77,13 @@ const SHAKING_PARAM = {
   duration: 500
 };
 
-export {Icons, Order, PromptTexts, SubmitMode, FilterAttrs, SortAttrs, DIFF_CLICK, SHAKING_PARAM, FormFields};
+const ViewMode = {
+  list: 'UL',
+  prompt: 'p'
+};
+
+export {
+  Icons, Order, PromptTexts, SubmitMode, FilterAttrs, SortAttrs,
+  DIFF_CLICK, SHAKING_PARAM, FormFields, ViewMode, ENDPOINT
+};
 

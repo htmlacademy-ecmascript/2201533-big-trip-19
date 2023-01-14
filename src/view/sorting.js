@@ -59,13 +59,14 @@ export default class Sorting {
   #currentField = SortAttrs.DAY;
   #currentOrder = this.#currentField.order;
   #ITEMS = [SortAttrs.DAY, SortAttrs.EVENT, SortAttrs.TIME, SortAttrs.PRICE, SortAttrs.OFFER];
-  #TEMPL = '<form class="trip-events__trip-sort  trip-sort" action="#" method="get"></form>';
+  #TEMPLATE = '<form class="trip-events__trip-sort  trip-sort" action="#" method="get"></form>';
   #element;
   #onChange;
   #defaultInput;
+  #inputs = [];
 
   constructor() {
-    this.#element = createElement(this.#TEMPL);
+    this.#element = createElement(this.#TEMPLATE);
     this.#ITEMS.forEach((item) => {
       const sortItem = new SortItem(item);
       this.#element.append(sortItem.getElement());
@@ -78,14 +79,15 @@ export default class Sorting {
           this.#onChange(this.currentMode);
         }
       });
-      if (item.checked){
+      if (item.checked) {
         this.#defaultInput = sortItem.input;
       }
+      this.#inputs.push(sortItem.input);
     });
   }
 
   reset() {
-    if (this.#currentField === SortAttrs.DAY){
+    if (this.#currentField === SortAttrs.DAY) {
       return false;
     }
     this.#currentField = SortAttrs.DAY;
@@ -106,4 +108,10 @@ export default class Sorting {
   }
 
   getElement = () => this.#element;
+
+  set disabled(disabled) {
+    this.#inputs.forEach((input) => {
+      input.disabled = disabled;
+    });
+  }
 }

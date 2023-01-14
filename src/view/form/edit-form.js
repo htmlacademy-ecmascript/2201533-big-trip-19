@@ -28,23 +28,17 @@ export default class EditFormView {
       if (this.#sectionOffers) {
         this.#sectionOffers.remove();
       }
-      this.#sectionOffers = this.#offers[this.#point.type].length > 0 ?
-        new FormOffersView(this.point.offers, this.#offers[this.point.type]).getElement() : false;
+      this.#setSectionOffers();
       if (this.#sectionOffers) {
-        this.#details.prepend(this.#sectionOffers);
+        this.#details.prepend(this.#sectionOffers.getElement());
       }
     };
     this.#header.onChangeDestination = (destination) => {
-      const isNew = this.#point.id === -1;
       this.#point.destination = destination.id;
       if (this.#sectionDestination) {
         this.#sectionDestination.remove();
       }
-      this.#sectionDestination = destination.description || (destination.pictures.length > 0 && isNew) ?
-        new FormDestinationView(destination, isNew).getElement() : false;
-      if (this.#sectionDestination) {
-        this.#details.append(this.#sectionDestination);
-      }
+      this.#setSectionDestination(destination);
     };
     this.header.onChangeDate = (key, value) => {
       this.#point[key] = value;
@@ -66,20 +60,13 @@ export default class EditFormView {
 
   update(point) {
     this.#point = point.copy();
-    const isNew = this.#point.id === -1;
     const destination = this.#destinations[point.destination];
     this.#header.update(point);
-    this.#sectionOffers =
-      this.#point.type && this.#offers[this.#point.type].length > 0 ?
-        new FormOffersView(this.point.offers, this.#offers[this.point.type]) : false;
+    this.#setSectionOffers();
     if (this.#sectionOffers) {
       this.#details.append(this.#sectionOffers.getElement());
     }
-    this.#sectionDestination = destination.description || (destination.pictures.length > 0 && isNew) ?
-      new FormDestinationView(destination, isNew).getElement() : false;
-    if (this.#sectionDestination) {
-      this.#details.append(this.#sectionDestination);
-    }
+    this.#setSectionDestination(destination);
   }
 
   default() {
@@ -92,6 +79,21 @@ export default class EditFormView {
       this.#sectionDestination = false;
     }
     this.#header.default();
+  }
+
+  #setSectionOffers() {
+    this.#sectionOffers =
+      this.#point.type && this.#offers[this.#point.type].length > 0 ?
+        new FormOffersView(this.point.offers, this.#offers[this.point.type]) : false;
+  }
+
+  #setSectionDestination(destination) {
+    const isNew = this.#point.id === -1;
+    this.#sectionDestination = destination.description || (destination.pictures.length > 0 && isNew) ?
+      new FormDestinationView(destination, isNew).getElement() : false;
+    if (this.#sectionDestination) {
+      this.#details.append(this.#sectionDestination);
+    }
   }
 
   set point(point) {

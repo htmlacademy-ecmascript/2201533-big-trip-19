@@ -54,7 +54,6 @@ export default class FormDestinationsGroup {
   }
 
   set disabled(disabled) {
-    console.log(disabled);
     this.#inputDestination.disabled = disabled;
   }
 

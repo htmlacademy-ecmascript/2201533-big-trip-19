@@ -17,6 +17,7 @@ export default class Model {
   #destinations = [];
   #typeOfOffers = {};
   #rest;
+  #loadErrors = [];
   #onLoad;
   #loaded = {
     points: false,
@@ -24,6 +25,7 @@ export default class Model {
     offers: false,
     check: () => this.#loaded.points && this.#loaded.destinations && this.#loaded.offers
   };
+
   #filters = {
     everything: () => true,
     future: (point) => point.dateFrom > this.#filters.currentDate,
@@ -38,10 +40,14 @@ export default class Model {
     this.#info = new TripInfo();
   }
 
-  init = (onLoad) => {
+  init = (onLoad, onError) => {
     this.#onLoad = () => {
-      this.#info.recalc(this);
-      onLoad();
+      if (this.#loadErrors.length > 0) {
+        onError(this.#loadErrors);
+      } else {
+        this.#info.recalc(this);
+        onLoad();
+      }
     };
     this.#rest.GET.points(this.#load.points, this.#onErrorLoad);
     this.#rest.GET.destinations(this.#load.destinations, this.#onErrorLoad);
@@ -79,14 +85,18 @@ export default class Model {
   };
 
   #onErrorLoad = (msg) => {
-    console.log(msg);
+    this.#loadErrors.push(msg);
+    this.#loaded[msg.endpoint] = true;
+    if (this.#loaded.check()) {
+      this.#onLoad();
+    }
   };
 
   get destinations() {
     return this.#destinations;
   }
 
-  get types(){
+  get types() {
     return Object.keys(this.#typeOfOffers);
   }
 

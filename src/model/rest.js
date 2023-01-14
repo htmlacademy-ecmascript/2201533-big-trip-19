@@ -7,6 +7,7 @@ export default class Rest {
     destinations: 'destinations',
     offers: 'offers'
   };
+
   #randomString;
 
   constructor() {
@@ -25,8 +26,11 @@ export default class Rest {
         if (response.ok) {
           return response.json();
         }
-        throw `status: ${response.status},
-          statusText: ${response.statusText}`;
+        throw {
+          status: response.status,
+          statusText: response.statusText,
+          endpoint: endpoint
+        };
       })
       .then(onSuccess)
       .catch(onError);
