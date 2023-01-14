@@ -24,10 +24,10 @@ export default class FormOffersView {
             &plus;&euro;&nbsp;
             <span class="event__offer-price">${offer.price}</span>
           </label>
-        </div>`)
+        </div>`);
       div.prepend(input);
-      container.append(div)
-    })
+      container.append(div);
+    });
 
     this.#element = createElementSan(sectionTemplate);
     this.#element.append(container);
@@ -42,7 +42,7 @@ export default class FormOffersView {
   }
 
   set disabled(disabled) {
-    this.#inputs.forEach((input) => {input.disabled = disabled});
+    this.#inputs.forEach((input) => {input.disabled = disabled;});
   }
 
   getElement = () => this.#element;

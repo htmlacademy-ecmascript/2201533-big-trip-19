@@ -66,7 +66,7 @@ export default class FormTimeGroup {
   }
 
   set disabled(disabled) {
-    for (let i in this.#inputs){
+    for (const i in this.#inputs){
       this.#inputs[i].disabled = disabled;
     }
   }

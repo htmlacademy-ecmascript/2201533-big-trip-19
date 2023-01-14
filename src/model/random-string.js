@@ -14,7 +14,7 @@ export default class RandomString {
   #value;
   #generate = () => {
     const codes = Array.from(
-      new Array(getRandomInt(this.#MIN_LENGTH, this.#MAX_LENGTH)), (x) => {
+      new Array(getRandomInt(this.#MIN_LENGTH, this.#MAX_LENGTH)), () => {
         const index = getRandomInt(0, 61);
         if (index > 35) {
           return index + 61;

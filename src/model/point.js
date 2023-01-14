@@ -98,8 +98,8 @@ export default class Point {
 
   recalc(owner) {
     this.#fullPrice = this.offers.reduce((accumulator, currentValue) =>
-        accumulator + owner.typeOfOffers[this.type].find((offer) => offer.id === currentValue).price
-      , this.basePrice);
+      accumulator + owner.typeOfOffers[this.type].find((offer) => offer.id === currentValue).price
+    , this.basePrice);
   }
 
   #newKey = (oldKey) => {

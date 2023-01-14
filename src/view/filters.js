@@ -94,12 +94,12 @@ export default class Filters {
       return false;
     }
     this.init();
-    return true
+    return true;
   };
 
   set disabled(disabled) {
     this.#inputs.forEach((input) => {
-      input.disabled = disabled
+      input.disabled = disabled;
     });
   }
 
