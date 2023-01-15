@@ -78,7 +78,7 @@ export default class Presenter {
       if (this.#model.points.length) {
         render(this.#sort, this.#sortContainer, RenderPosition.AFTERBEGIN);
       }
-      this.#recalc();
+      this.#recalculate();
       this.#list.onSubmit = this.onSubmit;
       this.#list.init(this.#model);
       this.#list.onChangeFavorite = this.onChangeFavorite;
@@ -101,7 +101,7 @@ export default class Presenter {
     });
   };
 
-  #recalc = () => {
+  #recalculate = () => {
     if (this.#model.points.length) {
       this.#info.data = this.#model.info.data;
       render(this.#info, this.#infoContainer, RenderPosition.AFTERBEGIN);

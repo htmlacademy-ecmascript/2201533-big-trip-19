@@ -110,8 +110,8 @@ export default class Sorting {
   getElement = () => this.#element;
 
   set disabled(disabled) {
-    this.#inputs.forEach((input) => {
-      input.disabled = disabled;
+    this.#ITEMS.forEach((item, index) => {
+      this.#inputs[index].disabled = disabled || item.disabled;
     });
   }
 }

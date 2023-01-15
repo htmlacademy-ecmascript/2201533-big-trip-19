@@ -19,9 +19,7 @@ export default class ListView {
   }
 
   set disabled(disabled) {
-    for (const i in this.#items) {
-      this.#items[i].disabled = disabled;
-    }
+    Object.values(this.#items).forEach((item) => {item.disabled = disabled;});
   }
 
   getElement = () => this.#element;
