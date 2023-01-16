@@ -36,9 +36,9 @@ export default class TripInfo {
     this.#uniqDestinations = new Set(Array.from(this.#points.list, (point) => point.destination));
   }
 
-  recalc(model) {
+  recalculate(model) {
     this.#points.list.forEach((point) => {
-      point.recalc(model);
+      point.recalculate(model);
       this.#fullPrice += point.pricePoint;
     });
   }

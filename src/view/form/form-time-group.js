@@ -31,7 +31,7 @@ export default class FormTimeGroup {
         `<input class="event__input  event__input--time" id="event-${name}-time" type="text"
         name="event-${name}-time" value="${dayjs().format('DD/MM/YY HH:mm')}">`
       );
-      flatpickr(input, {
+      this.#inputs[`${name}Pkr`] = flatpickr(input, {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
       });
@@ -66,9 +66,7 @@ export default class FormTimeGroup {
   }
 
   set disabled(disabled) {
-    for (const i in this.#inputs){
-      this.#inputs[i].disabled = disabled;
-    }
+    Object.values(this.#inputs).forEach((input) => {input.disabled = disabled;});
   }
 
   getElement = () => this.#element;

@@ -33,27 +33,6 @@ export default class Model {
     past: (point) => point.dateTo < this.#filters.currentDate
   };
 
-  constructor(rest) {
-    this.#rest = rest;
-    this.#points = new Points();
-    this.#destinations = new Destinations();
-    this.#info = new TripInfo();
-  }
-
-  init = (onLoad, onError) => {
-    this.#onLoad = () => {
-      if (this.#loadErrors.length > 0) {
-        onError(this.#loadErrors);
-      } else {
-        this.#info.recalc(this);
-        onLoad();
-      }
-    };
-    this.#rest.GET.points(this.#load.points, this.#onErrorLoad);
-    this.#rest.GET.destinations(this.#load.destinations, this.#onErrorLoad);
-    this.#rest.GET.offers(this.#load.offers, this.#onErrorLoad);
-  };
-
   #load = {
     points: (json) => {
       this.#points.fillJson(json);
@@ -92,6 +71,27 @@ export default class Model {
     }
   };
 
+  constructor(rest) {
+    this.#rest = rest;
+    this.#points = new Points();
+    this.#destinations = new Destinations();
+    this.#info = new TripInfo();
+  }
+
+  init = (onLoad, onError) => {
+    this.#onLoad = () => {
+      if (this.#loadErrors.length > 0) {
+        onError(this.#loadErrors);
+      } else {
+        this.#info.recalculate(this);
+        onLoad();
+      }
+    };
+    this.#rest.GET.points(this.#load.points, this.#onErrorLoad);
+    this.#rest.GET.destinations(this.#load.destinations, this.#onErrorLoad);
+    this.#rest.GET.offers(this.#load.offers, this.#onErrorLoad);
+  };
+
   get destinations() {
     return this.#destinations;
   }
@@ -117,17 +117,17 @@ export default class Model {
 
   getPoint = (id) => id > -1 ? this.#points.findID(id) : new Point();
 
-  post = (point, onAdd, onError) => {
+  post(point, onAdd, onError){
     this.#rest.POST(point.localPoint, (resp) => {
       point.id = parseInt(resp.id, 10);
       this.#points.add(point);
-      point.recalc(this);
+      point.recalculate(this);
       this.#info.afterAdd(point);
       onAdd({point: point});
     }, onError);
-  };
+  }
 
-  put = (point, onAlter, onError) => {
+  put(point, onAlter, onError){
     const pointModel = this.getPoint(point.id);
     if (pointModel.equal(point)) {
       return true;
@@ -135,35 +135,35 @@ export default class Model {
     this.#rest.PUT(point, () => {
       const alter = pointModel.alter(point);
       if (alter.includes('basePrice') || alter.includes('offers')) {
-        point.recalc(this);
+        point.recalculate(this);
       }
       this.#info.afterAlter(point, alter, point.pricePoint - pointModel.pricePoint);
       onAlter({point: pointModel, alter: alter});
     }, onError);
-  };
+  }
 
-  changeFavorite = (point, onChange) => {
+  changeFavorite(point, onChange){
     const changedPoint = point.copy();
     changedPoint.isFavorite = !point.isFavorite;
     this.#rest.PUT(changedPoint, () => {
       point.isFavorite = !point.isFavorite;
       onChange(point);
     });
-  };
+  }
 
-  deletePoint = (point, onDelete, onError) => {
+  deletePoint(point, onDelete, onError){
     const id = point.id;
     this.#rest.DELETE(id, () => {
       this.#points.delete(id);
       this.#info.afterDelete(point);
       onDelete({id: id});
     }, onError);
-  };
+  }
 
-  pointsFilter = (mode, currentDate) => {
+  pointsFilter(mode, currentDate){
     this.#filters.currentDate = currentDate;
     const filterPoints = new Points();
     filterPoints.list = this.#points.list.filter((point) => this.#filters[mode](point));
     return filterPoints;
-  };
+  }
 }
