@@ -26,51 +26,6 @@ export default class Model {
     check: () => this.#loaded.points && this.#loaded.destinations && this.#loaded.offers
   };
 
-  #filters = {
-    everything: () => true,
-    future: (point) => point.dateFrom > this.#filters.currentDate,
-    present: (point) => point.dateFrom <= this.#filters.currentDate && point.dateTo >= this.#filters.currentDate,
-    past: (point) => point.dateTo < this.#filters.currentDate
-  };
-
-  #load = {
-    points: (json) => {
-      this.#points.fillJson(json);
-      this.#info.init(this);
-      this.#loaded.points = true;
-      if (this.#loaded.check()) {
-        this.#onLoad();
-      }
-    },
-
-    destinations: (json) => {
-      this.#destinations.fillJson(json);
-      this.#loaded.destinations = true;
-      if (this.#loaded.check()) {
-        this.#onLoad();
-      }
-    },
-
-    offers: (json) => {
-      json.forEach((type) => {
-        this.#typeOfOffers[type.type] =
-          Array.from(type.offers, (offer) => new Offer(offer.id, offer.title, offer.price));
-      });
-      this.#loaded.offers = true;
-      if (this.#loaded.check()) {
-        this.#onLoad();
-      }
-    }
-  };
-
-  #onErrorLoad = (msg) => {
-    this.#loadErrors.push(msg);
-    this.#loaded[msg.endpoint] = true;
-    if (this.#loaded.check()) {
-      this.#onLoad();
-    }
-  };
-
   constructor(rest) {
     this.#rest = rest;
     this.#points = new Points();
@@ -126,6 +81,51 @@ export default class Model {
       onAdd({point: point});
     }, onError);
   }
+
+  #onErrorLoad = (msg) => {
+    this.#loadErrors.push(msg);
+    this.#loaded[msg.endpoint] = true;
+    if (this.#loaded.check()) {
+      this.#onLoad();
+    }
+  };
+
+  #filters = {
+    everything: () => true,
+    future: (point) => point.dateFrom > this.#filters.currentDate,
+    present: (point) => point.dateFrom <= this.#filters.currentDate && point.dateTo >= this.#filters.currentDate,
+    past: (point) => point.dateTo < this.#filters.currentDate
+  };
+
+  #load = {
+    points: (json) => {
+      this.#points.fillJson(json);
+      this.#info.init(this);
+      this.#loaded.points = true;
+      if (this.#loaded.check()) {
+        this.#onLoad();
+      }
+    },
+
+    destinations: (json) => {
+      this.#destinations.fillJson(json);
+      this.#loaded.destinations = true;
+      if (this.#loaded.check()) {
+        this.#onLoad();
+      }
+    },
+
+    offers: (json) => {
+      json.forEach((type) => {
+        this.#typeOfOffers[type.type] =
+          Array.from(type.offers, (offer) => new Offer(offer.id, offer.title, offer.price));
+      });
+      this.#loaded.offers = true;
+      if (this.#loaded.check()) {
+        this.#onLoad();
+      }
+    }
+  };
 
   put(point, onAlter, onError){
     const pointModel = this.getPoint(point.id);

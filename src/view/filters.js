@@ -104,4 +104,8 @@ export default class Filters {
   }
 
   getElement = () => this.#element;
+
+  get mode(){
+    return this.#currentFilter;
+  }
 }

@@ -1,7 +1,7 @@
 import {FormFields} from '../settings';
 
 export default class TripInfo {
-  #uniqDestinations;
+  #uniqDestinations = null;
   #startPoint = undefined;
   #endPoint = undefined;
   #fullPrice = 0;
@@ -11,12 +11,21 @@ export default class TripInfo {
   init(model) {
     this.#model = model;
     this.#points = model.points;
+    if (this.#points.length){
+      this.#setParams();
+    }
+  }
+
+  #setParams() {
     this.#setEndPoint();
     this.#setStartPoint();
     this.#setUniqDestinations();
   }
 
   get data() {
+    if (this.#points.length === 0) {
+      return false;
+    }
     return {
       title: this.#infoTitle(),
       date: this.#infoDate(),
@@ -53,6 +62,13 @@ export default class TripInfo {
   }
 
   afterDelete(point) {
+    if (this.#points.length === 0) {
+      this.#uniqDestinations = null;
+      this.#startPoint = undefined;
+      this.#endPoint = undefined;
+      this.#fullPrice = 0;
+      return;
+    }
     if (this.#startPoint.id === point.id) {
       this.#setStartPoint();
     }
@@ -65,6 +81,9 @@ export default class TripInfo {
 
   afterAdd(point) {
     this.#fullPrice += point.pricePoint;
+    if (!this.#startPoint){
+      this.#setParams();
+    }
   }
 
   afterAlter(point, alter, delta) {
