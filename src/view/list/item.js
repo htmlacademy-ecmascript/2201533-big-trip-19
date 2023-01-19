@@ -3,7 +3,7 @@ import Shaker from '../shaker';
 import {SHAKING_PARAM} from '../../settings';
 
 export default class Item {
-  #TEMPL = '<li class="trip-events__item"></li>';
+  #TEMPLATE = '<li class="trip-events__item"></li>';
   #shaker;
   element;
   _form;
@@ -11,7 +11,7 @@ export default class Item {
   _marginRight;
   constructor(form) {
     this._form = form;
-    this.element = createElement(this.#TEMPL);
+    this.element = createElement(this.#TEMPLATE);
     this.#shaker = new Shaker(SHAKING_PARAM);
     this.#shaker.onStep = this.#stepShaking;
     this.#shaker.onStop = this.#stopShaking;

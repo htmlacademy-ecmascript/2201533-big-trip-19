@@ -14,6 +14,7 @@ export default class Presenter {
   #eventAddButton;
   #sortContainer;
   #infoContainer;
+  #infoVisible;
 
   constructor(model) {
     this.#model = model;
@@ -21,48 +22,6 @@ export default class Presenter {
     this.#filter = new Filters(this.#onChangeFilter);
     this.#info = new Info();
   }
-
-  #onChangeFilter = (mode) => {
-    this.#filterMode = mode;
-    this.#list.filterPoints(this.#filterMode, this.#sort.currentMode);
-  };
-
-  onCloseAddForm = () => {
-    this.#eventAddButton.disabled = false;
-  };
-
-  onChangeFavorite = (point) => {
-    this.#model.changeFavorite(point, this.#list.changeFavorite);
-  };
-
-  onSort = (options) => {
-    this.#list.sort(options);
-  };
-
-  #blockInterface(block) {
-    this.#list.blockInterface(block);
-    this.#filter.disabled = block;
-    this.#sort.disabled = block;
-    this.#eventAddButton.disabled = block;
-  }
-
-  onSubmit = (mode, point, onSuccess, onError) => {
-    this.#blockInterface(true);
-    if (this.#model[mode.direct](point, (options) => {
-      this.#blockInterface(false);
-      this.#info.data = this.#model.info.data;
-      onSuccess(options);
-    }, () => {
-      this.#blockInterface(false);
-      onError();
-    })) {
-      this.#list.hideForm();
-    }
-  };
-
-  #onChangeListState = (emptyList) => {
-    this.#renderSort(emptyList);
-  };
 
   start = () => {
     this.#sortContainer = document.querySelector('.trip-events');
@@ -81,8 +40,8 @@ export default class Presenter {
       this.#recalculate();
       this.#list.onSubmit = this.onSubmit;
       this.#list.init(this.#model);
-      this.#list.onChangeFavorite = this.onChangeFavorite;
       this.#list.onCancel = () => this.onCloseAddForm();
+      this.#list.onChangeFavorite = this.onChangeFavorite;
       this.#list.onChangeState = this.#onChangeListState;
       this.#sort.onChange = this.onSort;
       this.#filter.init();
@@ -101,18 +60,67 @@ export default class Presenter {
     });
   };
 
-  #recalculate = () => {
-    if (this.#model.points.length) {
-      this.#info.data = this.#model.info.data;
-      render(this.#info, this.#infoContainer, RenderPosition.AFTERBEGIN);
+  #onChangeFilter = (mode) => {
+    this.#filterMode = mode;
+    this.#list.filterPoints(this.#filterMode, this.#sort.currentMode);
+  };
+
+  onCloseAddForm = () => {
+    this.#eventAddButton.disabled = false;
+  };
+
+  onChangeFavorite = (point) => {
+    this.#model.changeFavorite(point, this.#list.changeFavorite);
+  };
+
+  onSort = (options) => {
+    this.#list.sort(options);
+  };
+
+  onSubmit = (mode, point, onSuccess, onError) => {
+    this.#blockInterface(true);
+    if (this.#model[mode.direct](point, (options) => {
+      this.#blockInterface(false);
+      this.#recalculate();
+      onSuccess(options);
+    }, () => {
+      this.#blockInterface(false);
+      onError();
+    })) {
+      this.#list.hideForm();
     }
   };
 
-  #renderSort = (invisible) => {
+  #onChangeListState = (emptyList) => {
+    this.#renderSort(emptyList);
+  };
+
+  #blockInterface(block) {
+    this.#list.blockInterface(block);
+    this.#filter.disabled = block;
+    this.#sort.disabled = block;
+    this.#eventAddButton.disabled = block;
+  }
+
+  #recalculate() {
+    if (this.#model.info.data) {
+      this.#info.data = this.#model.info.data;
+    }
+    if (!(this.#infoVisible && Boolean(this.#model.info.data))){
+      if (this.#infoVisible) {
+        this.#info.getElement().remove();
+      } else {
+        render(this.#info, this.#infoContainer, RenderPosition.AFTERBEGIN);
+      }
+      this.#infoVisible = !this.#infoVisible;
+    }
+  }
+
+  #renderSort (invisible) {
     if (invisible) {
       this.#sort.getElement().remove();
     } else {
       render(this.#sort, this.#sortContainer, RenderPosition.AFTERBEGIN);
     }
-  };
+  }
 }

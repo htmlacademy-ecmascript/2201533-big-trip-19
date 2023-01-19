@@ -1,26 +1,11 @@
 import {newPointFromJson} from './from-json';
+import {FILL_POINTS} from '../settings';
 
 export default class Points {
   #list = [];
   #options;
-  constructor() {}
 
-  #compare = {
-    date: (a, b) => {
-      const diff = a.diff(b);
-      return Math.round(diff / Math.abs(diff));
-    },
-    dateFrom: (a, b) => this.#compare.date(a.dateFrom, b.dateFrom),
-    dateTo: (a,b) => this.#compare.date(a.dateTo, b.dateTo),
-    duration: (a, b) => {
-      const diff = a.dateTo.diff(a.dateFrom) - b.dateTo.diff(b.dateFrom);
-      return Math.round(diff / Math.abs(diff));
-    },
-    basePrice: (a, b) => {
-      const diff = a.basePrice - b.basePrice;
-      return Math.round(diff / Math.abs(diff));
-    }
-  };
+  constructor() {}
 
   get length() {
     return this.#list.length;
@@ -46,8 +31,27 @@ export default class Points {
     this.#list = list;
   }
 
+  #compare = {
+    date: (a, b) => {
+      const diff = a.diff(b);
+      return Math.round(diff / Math.abs(diff));
+    },
+    dateFrom: (a, b) => this.#compare.date(a.dateFrom, b.dateFrom),
+    dateTo: (a,b) => this.#compare.date(a.dateTo, b.dateTo),
+    duration: (a, b) => {
+      const diff = a.dateTo.diff(a.dateFrom) - b.dateTo.diff(b.dateFrom);
+      return Math.round(diff / Math.abs(diff));
+    },
+    basePrice: (a, b) => {
+      const diff = a.basePrice - b.basePrice;
+      return Math.round(diff / Math.abs(diff));
+    }
+  };
+
   fillJson(json) {
-    json.forEach((point) => this.list.push(newPointFromJson(point)));
+    if (FILL_POINTS){
+      json.forEach((point) => this.list.push(newPointFromJson(point)));
+    }
   }
 
   delete(id) {

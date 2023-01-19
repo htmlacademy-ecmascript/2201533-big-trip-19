@@ -130,6 +130,7 @@ export default class ListPoints {
       this.#listView.insert(point.id, beforeID);
     } else {
       this.#points.list.push(point);
+      this.#listView.add(point.id);
     }
     this.#setElement();
     this.hideForm();

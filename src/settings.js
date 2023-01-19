@@ -79,11 +79,13 @@ const SHAKING_PARAM = {
 
 const ViewMode = {
   list: 'UL',
-  prompt: 'p'
+  prompt: 'P'
 };
+
+const FILL_POINTS = true;
 
 export {
   Icons, Order, PromptTexts, SubmitMode, FilterAttrs, SortAttrs,
-  DIFF_CLICK, SHAKING_PARAM, FormFields, ViewMode, ENDPOINT
+  DIFF_CLICK, SHAKING_PARAM, FormFields, ViewMode, ENDPOINT, FILL_POINTS
 };
 
