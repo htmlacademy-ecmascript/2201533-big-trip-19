@@ -42,7 +42,7 @@ export default class FilterItem extends AbstractTrickyView {
     super._createElement();
     this.element.append(this.#input.element);
     this.element.append(label.element);
-  };
+  }
 
   get input() {
     return this.#input;

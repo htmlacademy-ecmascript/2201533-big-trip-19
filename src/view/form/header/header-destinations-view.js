@@ -32,7 +32,7 @@ export default class HeaderDestinationsView extends AbstractTrickyView{
     });
     this.element.prepend(this.#inputDestination);
     this.element.prepend(this.#labelType);
-  };
+  }
 
   default() {
     this.name = '';
