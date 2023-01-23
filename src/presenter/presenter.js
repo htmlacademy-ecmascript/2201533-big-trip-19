@@ -1,7 +1,7 @@
-import Sorting from '../view/sorting.js';
-import Filters from '../view/filters.js';
+import Sorting from '../view/sorting/sorting.js';
+import Filters from '../view/filters/filters.js';
 import Info from '../view/info.js';
-import {render, RenderPosition} from '../view/render.js';
+import {render, RenderPosition} from '../framework/render.js';
 import ListPoints from './list-points.js';
 
 export default class Presenter {
@@ -32,7 +32,7 @@ export default class Presenter {
     this.#eventAddButton.disabled = true;
     this.#list = new ListPoints();
 
-    render(this.#list.view, this.#sortContainer);
+    render(this.#list.view.element, this.#sortContainer);
     this.#model.init(() => {
       if (this.#model.points.length) {
         render(this.#sort, this.#sortContainer, RenderPosition.AFTERBEGIN);
@@ -83,7 +83,8 @@ export default class Presenter {
       this.#blockInterface(false);
       this.#recalculate();
       onSuccess(options);
-    }, () => {
+    }, (msg) => {
+      console.log(msg);
       this.#blockInterface(false);
       onError();
     })) {
@@ -108,7 +109,7 @@ export default class Presenter {
     }
     if (!(this.#infoVisible && Boolean(this.#model.info.data))){
       if (this.#infoVisible) {
-        this.#info.getElement().remove();
+        this.#info.element.remove();
       } else {
         render(this.#info, this.#infoContainer, RenderPosition.AFTERBEGIN);
       }
@@ -118,7 +119,7 @@ export default class Presenter {
 
   #renderSort (invisible) {
     if (invisible) {
-      this.#sort.getElement().remove();
+      this.#sort.element.remove();
     } else {
       render(this.#sort, this.#sortContainer, RenderPosition.AFTERBEGIN);
     }

@@ -1,23 +1,23 @@
 import EditFormView from '../view/form/edit-form-view.js';
 import dayjs from 'dayjs';
 import {FormFields, PromptTexts, ViewMode} from '../settings';
-import ItemRollup from '../view/list/item-rollup';
+import ItemRollup from './item-rollup';
 import Point from '../model/point';
-import ItemNewForm from '../view/list/item-new-form';
-import ListView from '../view/list/list-view';
+import ItemNewForm from './item-new-form';
+import MainView from '../view/list/main-view';
 
 export default class ListPoints {
   #model;
   #points;
   #itemNewPoint;
   #form;
-  #onSubmit;
+  onFormSubmit;
   #onChangeState;
   #onChangeFavorite;
   #listView;
 
   constructor() {
-    this.#listView = new ListView();
+    this.#listView = new MainView();
     this.#listView.prompt = PromptTexts.loading;
   }
 
@@ -29,12 +29,12 @@ export default class ListPoints {
     });
     this.#itemNewPoint = new ItemNewForm(this.#form);
     this.#itemNewPoint.list = this.#listView.list;
-    this.#itemNewPoint.onSubmit = this.#onSubmit;
+    this.#itemNewPoint.onSubmit = this.onFormSubmit;
     document.addEventListener('keydown', this.#onKeyDown);
   };
 
   set onSubmit(onSubmit) {
-    this.#onSubmit = (mode, point, button) => {
+    this.onFormSubmit = (mode, point, button) => {
       button.textContent = mode.directText;
       onSubmit(mode, point, (options) => {
         button.textContent = mode.backText;
@@ -63,7 +63,7 @@ export default class ListPoints {
   }
 
   #onError = () => {
-    this.#form.owner.shakeHead();
+    // this.#form.owner.shakeHead();
   };
 
   newEvent = () => {
@@ -84,7 +84,7 @@ export default class ListPoints {
     if (!isNew) {
       this.#onChangeState(this.#points.length === 0);
     }
-    this.#listView.element = this.#points.length > 0 || isNew ? ViewMode.list : ViewMode.prompt;
+    this.#listView.view = this.#points.length > 0 || isNew ? ViewMode.list : ViewMode.prompt;
   };
 
   filterPoints = (mode, sortMode) => {
@@ -95,10 +95,10 @@ export default class ListPoints {
     this.#setElement();
   };
 
-  sort(options) {
+  sort = (options) => {
     this.#points.sort(options);
     this.#fillList();
-  }
+  };
 
   #onKeyDown = (evt) => {
     if (this.#form.owner && evt.key === 'Escape') {
@@ -113,10 +113,10 @@ export default class ListPoints {
       this.#model.destinations[point.destination].name,
       point.offers.length > 0 ? this.#model.getOffers(point.type, point.offers) : false,
     );
-    item.routePoint.favoriteButton.getElement().addEventListener('click', () => {
+    item.routePoint.favoriteButton.element.addEventListener('click', () => {
       this.#onChangeFavorite(point);
     });
-    item.onSubmit = this.#onSubmit;
+    item.onSubmit = this.onFormSubmit;
     this.#listView.new(item);
   };
 
@@ -157,9 +157,9 @@ export default class ListPoints {
     this.hideForm();
   };
 
-  hideForm() {
+  hideForm = () => {
     this.#form.owner.hideForm();
-  }
+  };
 
   changeFavorite = (point) => {
     this.#listView.changeFavorite(point.id, point.isFavorite);

@@ -1,32 +1,37 @@
-import {createElement, createElementSan} from '../render';
+import AbstractView from '../../framework/view/abstract-view';
+import AbstractTrickyView from '../abstract-tricky-view';
 
-class Offer {
-  #TEMPLATE;
-  #element;
+class Offer extends AbstractView {
+  #offer;
 
   constructor(offer) {
-    this.#TEMPLATE =
-      `<li class="event__offer">
-      <span class="event__offer-title">${offer.title}</span>
-      &plus;&euro;&nbsp;
-      <span class="event__offer-price">${offer.price}</span>
-    </li>`;
-    this.#element = createElementSan(this.#TEMPLATE);
+    super();
+    this.#offer = offer;
   }
 
-  getElement = () => this.#element;
+  get template() {
+    return `<li class="event__offer">
+      <span class="event__offer-title">${this.#offer.title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${this.#offer.price}</span>
+    </li>`;
+  }
 }
 
-export default class ListOffers {
-  #TEMPLATE = '<ul class="event__selected-offers"></ul>';
-  #element;
-
+export default class ListOffers extends AbstractTrickyView {
   constructor(offers) {
-    this.#element = createElement(this.#TEMPLATE);
-    offers.forEach((offer) => {
-      this.#element.append(new Offer(offer).getElement());
-    });
+    super();
+    this._createElement(offers);
   }
 
-  getElement = () => this.#element;
+  _createElement = (offers) => {
+    super._createElement();
+    offers.forEach((offer) => {
+      this.element.append(new Offer(offer).element);
+    });
+  };
+
+  get template() {
+    return '<ul class="event__selected-offers"></ul>';
+  }
 }

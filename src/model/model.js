@@ -14,7 +14,7 @@ class Offer {
 export default class Model {
   #info;
   #points;
-  #destinations = [];
+  #destinations;
   #typeOfOffers = {};
   #rest;
   #loadErrors = [];
@@ -143,7 +143,7 @@ export default class Model {
   }
 
   changeFavorite(point, onChange){
-    const changedPoint = point.copy();
+    const changedPoint = point.copy;
     changedPoint.isFavorite = !point.isFavorite;
     this.#rest.PUT(changedPoint, () => {
       point.isFavorite = !point.isFavorite;

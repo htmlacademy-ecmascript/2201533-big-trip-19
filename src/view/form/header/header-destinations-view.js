@@ -1,20 +1,22 @@
-import {createElement, createElementSan} from '../render';
+import {createElement} from '../../../framework/render';
+import AbstractTrickyView from '../../abstract-tricky-view';
+import DOMPurify from 'dompurify';
 
-export default class HeaderDestinationsView {
+export default class HeaderDestinationsView extends AbstractTrickyView{
   #labelType;
-  #onChange;
+  onChange;
   #destination;
-  #element;
   #inputDestination;
+  #destinations;
 
   constructor(destinations) {
-    this.#element = createElementSan(
-      `<div class="event__field-group  event__field-group--destination">
-      <datalist id="destination-list">
-        ${Array.from(destinations, (elem) => `<option value="${elem.name}"></option>`).join('')}
-      </datalist>
-    </div>`
-    );
+    super();
+    this.#destinations = destinations;
+    this._createElement();
+  }
+
+  _createElement() {
+    super._createElement();
     this.#labelType = createElement(
       '<label class="event__label  event__type-output" for="event-destination"></label>');
 
@@ -23,14 +25,14 @@ export default class HeaderDestinationsView {
         name="event-destination" value="" list="destination-list">
     `);
     this.#inputDestination.addEventListener('change', (evt) => {
-      const destination = destinations.find((element) => element.name === evt.target.value);
+      const destination = this.#destinations.find((element) => element.name === evt.target.value);
       if (destination) {
-        this.#onChange(destination);
+        this.onChange(destination);
       }
     });
-    this.#element.prepend(this.#inputDestination);
-    this.#element.prepend(this.#labelType);
-  }
+    this.element.prepend(this.#inputDestination);
+    this.element.prepend(this.#labelType);
+  };
 
   default() {
     this.name = '';
@@ -39,10 +41,6 @@ export default class HeaderDestinationsView {
 
   get destination() {
     return this.#destination;
-  }
-
-  set onChange(onChange) {
-    this.#onChange = onChange;
   }
 
   get labelType() {
@@ -61,5 +59,13 @@ export default class HeaderDestinationsView {
     this.#labelType.textContent = `${type[0].toUpperCase()}${type.slice(1)}`;
   }
 
-  getElement = () => this.#element;
+  get template() {
+    return DOMPurify.sanitize(
+      `<div class="event__field-group  event__field-group--destination">
+        <datalist id="destination-list">
+          ${Array.from(this.#destinations, (elem) => `<option value="${elem.name}"></option>`).join('')}
+        </datalist>
+      </div>`
+    );
+  }
 }
