@@ -1,8 +1,10 @@
-import Sorting from '../view/sorting.js';
-import Filters from '../view/filters.js';
+import Sorting from '../view/sorting/sorting.js';
+import Filters from '../view/filters/filters.js';
 import Info from '../view/info.js';
-import {render, RenderPosition} from '../view/render.js';
-import ListPoints from './list-points.js';
+import IndexView from '../view/index-view';
+import ListPoints from './list-points';
+import UiBlocker from '../framework/ui-blocker/ui-blocker';
+import {BLOCK_LIMITS} from '../settings';
 
 export default class Presenter {
   #sort;
@@ -11,32 +13,22 @@ export default class Presenter {
   #info;
   #model;
   #list;
-  #eventAddButton;
-  #sortContainer;
-  #infoContainer;
-  #infoVisible;
-
+  #index;
+  #blocker;
   constructor(model) {
     this.#model = model;
     this.#sort = new Sorting();
     this.#filter = new Filters(this.#onChangeFilter);
     this.#info = new Info();
+    this.#list = new ListPoints();
+    this.#index = new IndexView(this.#filter, this.#sort, this.#list, this.#info);
+    this.#blocker = new UiBlocker(BLOCK_LIMITS);
   }
 
   start = () => {
-    this.#sortContainer = document.querySelector('.trip-events');
-    const filterContainer = document.querySelector('.trip-controls__filters');
-    render(this.#filter, filterContainer);
-    this.#infoContainer = document.querySelector('.trip-main');
-    this.#eventAddButton = document.querySelector('.trip-main__event-add-btn');
-    this.#eventAddButton.disabled = true;
-    this.#list = new ListPoints();
-
-    render(this.#list.view, this.#sortContainer);
     this.#model.init(() => {
-      if (this.#model.points.length) {
-        render(this.#sort, this.#sortContainer, RenderPosition.AFTERBEGIN);
-      }
+      this.#index.sort = this.#model.points.length === 0;
+      this.#index.init(this.addFormShow);
       this.#recalculate();
       this.#list.onSubmit = this.onSubmit;
       this.#list.init(this.#model);
@@ -45,19 +37,18 @@ export default class Presenter {
       this.#list.onChangeState = this.#onChangeListState;
       this.#sort.onChange = this.onSort;
       this.#filter.init();
-      this.#eventAddButton.disabled = false;
-      this.#eventAddButton.addEventListener('click', () => {
-        this.#eventAddButton.disabled = true;
-        let needSort = this.#sort.reset();
-        needSort = needSort && !this.#filter.reset();
-        if (needSort) {
-          this.#list.sort(this.#sort.currentMode);
-        }
-        this.#list.newEvent();
-      });
     }, (errors) => {
       this.#list.view.showErrors(errors);
     });
+  };
+
+  addFormShow = () => {
+    let needSort = this.#sort.reset();
+    needSort = needSort && !this.#filter.reset();
+    if (needSort) {
+      this.#list.sort(this.#sort.currentMode);
+    }
+    this.#list.newEvent();
   };
 
   #onChangeFilter = (mode) => {
@@ -66,7 +57,7 @@ export default class Presenter {
   };
 
   onCloseAddForm = () => {
-    this.#eventAddButton.disabled = false;
+    this.#index.disabled = false;
   };
 
   onChangeFavorite = (point) => {
@@ -92,35 +83,22 @@ export default class Presenter {
   };
 
   #onChangeListState = (emptyList) => {
-    this.#renderSort(emptyList);
+    this.#index.sort = emptyList;
   };
 
   #blockInterface(block) {
     this.#list.blockInterface(block);
     this.#filter.disabled = block;
     this.#sort.disabled = block;
-    this.#eventAddButton.disabled = block;
+    this.#index.disabled = block;
+    const action = block ? 'block' : 'unblock';
+    this.#blocker[action]();
   }
 
   #recalculate() {
     if (this.#model.info.data) {
       this.#info.data = this.#model.info.data;
     }
-    if (!(this.#infoVisible && Boolean(this.#model.info.data))){
-      if (this.#infoVisible) {
-        this.#info.getElement().remove();
-      } else {
-        render(this.#info, this.#infoContainer, RenderPosition.AFTERBEGIN);
-      }
-      this.#infoVisible = !this.#infoVisible;
-    }
-  }
-
-  #renderSort (invisible) {
-    if (invisible) {
-      this.#sort.getElement().remove();
-    } else {
-      render(this.#sort, this.#sortContainer, RenderPosition.AFTERBEGIN);
-    }
+    this.#index.info = !(this.#model.info.data);
   }
 }

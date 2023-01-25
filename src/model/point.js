@@ -90,7 +90,7 @@ export default class Point {
     return alter;
   };
 
-  copy() {
+  get copy() {
     if (this.id === -1) {
       return this;
     }

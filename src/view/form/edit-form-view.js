@@ -1,77 +1,82 @@
-import {createElement} from '../render.js';
 import FormOffersView from './form-offers-view';
 import FormDestinationView from './form-destination-view';
 import FormHeaderView from './form-header-view';
+import AbstractTrickyView from '../abstract-tricky-view';
 
-export default class EditFormView {
-  #point;
+export default class EditFormView extends AbstractTrickyView {
+  point;
   #destinations;
-  #TEMPLATE = `<form class="event event--edit" action="#" method="post">
-              <section class="event__details"></section>
-            </form>`;
-
-  #element;
   #header;
   #details;
   #offers;
   #sectionOffers;
   #sectionDestination;
-  owner;
+  submit;
+  cancel;
 
   constructor(types, destinations, offers) {
+    super();
     this.#destinations = destinations;
     this.#offers = offers;
     this.#header = new FormHeaderView(types, destinations);
-    this.#header.onChangeType = (type) => {
-      this.#point.type = type;
-      this.#point.offers = [];
+    this._createElement();
+  }
+
+  _createElement = () => {
+    super._createElement();
+    this.#header.callBacks = this.#callBacks;
+    this.#details = this.element.querySelector('.event__details');
+    this.element.prepend(this.#header.element);
+    this.element.addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      this.submit();
+    });
+    this.buttonCancel.addEventListener('click', () => {
+      this.cancel();
+    });
+  };
+
+  #callBacks = {
+    onChangeType: (type) => {
+      this.point.type = type;
+      this.point.offers = [];
       if (this.#sectionOffers) {
         this.#sectionOffers.remove();
       }
       this.#setSectionOffers();
       if (this.#sectionOffers) {
-        this.#details.prepend(this.#sectionOffers.getElement());
+        this.#details.prepend(this.#sectionOffers.element);
       }
-    };
-    this.#header.onChangeDestination = (destination) => {
-      this.#point.destination = destination.id;
+    },
+    onChangeDestination: (destination) => {
+      this.point.destination = destination.id;
       if (this.#sectionDestination) {
         this.#sectionDestination.remove();
       }
       this.#setSectionDestination(destination);
-    };
-    this.header.onChangeDate = (key, value) => {
-      this.#point[key] = value;
-    };
-    this.header.onChangePrice = (price) => {
-      this.#point.basePrice = price;
-    };
-    this.#element = createElement(this.#TEMPLATE);
-    this.#details = this.#element.querySelector('.event__details');
-    this.#element.prepend(this.#header.getElement());
-    this.#element.addEventListener('submit', (evt) => {
-      evt.preventDefault();
-      this.owner.submit();
-    });
-    this.buttonCancel.addEventListener('click', () => {
-      this.owner.cancel();
-    });
-  }
+    },
+    onChangeDate: (key, value) => {
+      this.point[key] = value;
+    },
+    onChangePrice: (price) => {
+      this.point.basePrice = price;
+    }
+  };
 
   update(point) {
-    this.#point = point.copy();
+    this.point = point;
     const destination = this.#destinations[point.destination];
     this.#header.update(point);
     this.#setSectionOffers();
     if (this.#sectionOffers) {
-      this.#details.append(this.#sectionOffers.getElement());
+      this.#details.append(this.#sectionOffers.element);
     }
     this.#setSectionDestination(destination);
   }
 
   default() {
     if (this.#sectionOffers) {
-      this.#sectionOffers.getElement().remove();
+      this.#sectionOffers.element.remove();
       this.#sectionOffers = false;
     }
     if (this.#sectionDestination) {
@@ -83,25 +88,17 @@ export default class EditFormView {
 
   #setSectionOffers() {
     this.#sectionOffers =
-      this.#point.type && this.#offers[this.#point.type].length > 0 ?
+      this.point.type && this.#offers[this.point.type].length > 0 ?
         new FormOffersView(this.point.offers, this.#offers[this.point.type]) : false;
   }
 
   #setSectionDestination(destination) {
-    const isNew = this.#point.id === -1;
+    const isNew = this.point.id === -1;
     this.#sectionDestination = destination.description || (destination.pictures.length > 0 && isNew) ?
-      new FormDestinationView(destination, isNew).getElement() : false;
+      new FormDestinationView(destination, isNew).element : false;
     if (this.#sectionDestination) {
       this.#details.append(this.#sectionDestination);
     }
-  }
-
-  set point(point) {
-    this.#point = point;
-  }
-
-  get point() {
-    return this.#point;
   }
 
   get buttonCancel() {
@@ -116,13 +113,18 @@ export default class EditFormView {
     return this.#header;
   }
 
-  set marginLeft(value) {
-    this.#element.style.marginLeft = `${value}px`;
+  get template() {
+    return `<form class="event event--edit" action="#" method="post">
+              <section class="event__details"></section>
+            </form>`;
   }
-
-  set marginRight(value) {
-    this.#element.style.marginRight = `${value}px`;
-  }
+  // set marginLeft(value) {
+  //   this.#element.style.marginLeft = `${value}px`;
+  // }
+  //
+  // set marginRight(value) {
+  //   this.#element.style.marginRight = `${value}px`;
+  // }
 
   set disabled(disabled) {
     this.#header.disabled = disabled;
@@ -131,9 +133,9 @@ export default class EditFormView {
     }
   }
 
-  getElement = () => this.#element;
-
-  clearStyle() {
-    this.#element.style = '';
-  }
+  // getElement = () => this.#element;
+  //
+  // clearStyle() {
+  //   this.#element.style = '';
+  // }
 }

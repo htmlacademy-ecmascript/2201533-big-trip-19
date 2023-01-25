@@ -71,11 +71,16 @@ const SubmitMode = {
   },
 };
 
-const SHAKING_PARAM = {
-  amplitude: 40,
-  count: 3,
-  duration: 500
+const BLOCK_LIMITS = {
+  lowerLimit: 20,
+  upperLimit: 500
 };
+
+// const SHAKING_PARAM = {
+//   amplitude: 40,
+//   count: 3,
+//   duration: 500
+// };
 
 const ViewMode = {
   list: 'UL',
@@ -86,6 +91,6 @@ const FILL_POINTS = true;
 
 export {
   Icons, Order, PromptTexts, SubmitMode, FilterAttrs, SortAttrs,
-  DIFF_CLICK, SHAKING_PARAM, FormFields, ViewMode, ENDPOINT, FILL_POINTS
+  DIFF_CLICK, FormFields, ViewMode, ENDPOINT, FILL_POINTS, BLOCK_LIMITS
 };
 
