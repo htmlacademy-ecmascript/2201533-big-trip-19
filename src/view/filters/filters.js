@@ -51,6 +51,12 @@ export default class Filters extends AbstractTrickyView {
     });
   }
 
+  set disableItems(items) {
+    this.#ITEMS.forEach((value, index) => {
+      this.#inputs[index].element.disabled = !items[value.name];
+    });
+  }
+
   reset = () => {
     if (this.#currentFilter === this.#defaultFilter) {
       return false;

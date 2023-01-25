@@ -2,15 +2,9 @@ import Point from './point';
 import Points from './points';
 import TripInfo from './trip-info';
 import Destinations from './destinations';
-import Load from './load';
-
-class Filters {
-  currentDate;
-  everything = () => true;
-  future = (point) => point.dateFrom > this.currentDate;
-  present = (point) => point.dateFrom <= this.currentDate && point.dateTo >= this.currentDate;
-  past = (point) => point.dateTo < this.currentDate;
-}
+import LoadData from './load-data';
+import FiltersModel from './filters-model';
+import dayjs from 'dayjs';
 
 export default class Model {
   #info;
@@ -20,13 +14,14 @@ export default class Model {
   #rest;
   #filters;
   #load;
+
   constructor(rest) {
     this.#rest = rest;
     this.#points = new Points();
     this.#destinations = new Destinations();
     this.#info = new TripInfo();
-    this.#filters = new Filters();
-    this.#load = new Load(this, rest);
+    this.#filters = new FiltersModel();
+    this.#load = new LoadData(this, rest);
   }
 
   init = (onLoad, onError) => {
@@ -51,6 +46,11 @@ export default class Model {
 
   get info() {
     return this.#info;
+  }
+
+  get existFilters() {
+    this.#filters.currentDate = dayjs();
+    return this.#filters.getExist(this.#points.list);
   }
 
   getOffers = (type, offers) =>
@@ -101,7 +101,7 @@ export default class Model {
     }, onError);
   };
 
-  pointsFilter = (mode, currentDate) =>{
+  pointsFilter = (mode, currentDate) => {
     this.#filters.currentDate = currentDate;
     const filterPoints = new Points();
     filterPoints.list = this.#points.list.filter((point) => this.#filters[mode](point));

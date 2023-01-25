@@ -1,21 +1,22 @@
 import Offer from './offer';
 
-class Loaded {
+class IsLoaded {
   points = false;
   destinations = false;
   offers = false;
   check = () => this.points && this.destinations && this.offers;
 }
 
-export default class Load {
+export default class LoadData {
   #loaded;
   #model;
   #loadErrors = [];
   #onLoad;
   #rest;
+
   constructor(model, rest) {
     this.#model = model;
-    this.#loaded = new Loaded();
+    this.#loaded = new IsLoaded();
     this.#rest = rest;
   }
 
