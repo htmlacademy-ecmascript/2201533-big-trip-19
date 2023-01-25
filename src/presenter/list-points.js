@@ -63,7 +63,7 @@ export default class ListPoints {
   }
 
   #onError = () => {
-    // this.#form.owner.shakeHead();
+    this.#form.shake();
   };
 
   newEvent = () => {
