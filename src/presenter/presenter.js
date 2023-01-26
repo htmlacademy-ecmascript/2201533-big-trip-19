@@ -15,6 +15,7 @@ export default class Presenter {
   #list;
   #index;
   #blocker;
+
   constructor(model) {
     this.#model = model;
     this.#sort = new Sorting();
@@ -100,5 +101,6 @@ export default class Presenter {
       this.#info.data = this.#model.info.data;
     }
     this.#index.info = !(this.#model.info.data);
+    this.#filter.disableItems = this.#model.existFilters;
   }
 }

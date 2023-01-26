@@ -5,7 +5,7 @@ export default class Points {
   #list = [];
   #options;
 
-  constructor() {}
+  //constructor() {}
 
   get length() {
     return this.#list.length;
@@ -85,10 +85,5 @@ export default class Points {
   sort(options){
     this.#options = options;
     this.#list.sort((a, b) => this.#compare[options.field.field](a, b) * options.order);
-  }
-
-  represent() {
-    return Array.from(this.#list,
-      (point) => `${point.id}, ${point.dateFrom}, ${point.basePrice}`).join('\n');
   }
 }
