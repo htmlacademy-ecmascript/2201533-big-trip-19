@@ -76,12 +76,6 @@ const BLOCK_LIMITS = {
   upperLimit: 500
 };
 
-// const SHAKING_PARAM = {
-//   amplitude: 40,
-//   count: 3,
-//   duration: 500
-// };
-
 const ViewMode = {
   list: 'UL',
   prompt: 'P'

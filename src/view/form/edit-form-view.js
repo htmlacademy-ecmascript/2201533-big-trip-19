@@ -63,10 +63,10 @@ export default class EditFormView extends AbstractTrickyView {
     }
   };
 
-  update(point) {
+  update(point, onRollUp) {
     this.point = point;
     const destination = this.#destinations[point.destination];
-    this.#header.update(point);
+    this.#header.update(point, onRollUp);
     this.#setSectionOffers();
     if (this.#sectionOffers) {
       this.#details.append(this.#sectionOffers.element);
@@ -118,13 +118,6 @@ export default class EditFormView extends AbstractTrickyView {
               <section class="event__details"></section>
             </form>`;
   }
-  // set marginLeft(value) {
-  //   this.#element.style.marginLeft = `${value}px`;
-  // }
-  //
-  // set marginRight(value) {
-  //   this.#element.style.marginRight = `${value}px`;
-  // }
 
   set disabled(disabled) {
     this.#header.disabled = disabled;
@@ -132,10 +125,4 @@ export default class EditFormView extends AbstractTrickyView {
       this.#sectionOffers.disabled = disabled;
     }
   }
-
-  // getElement = () => this.#element;
-  //
-  // clearStyle() {
-  //   this.#element.style = '';
-  // }
 }

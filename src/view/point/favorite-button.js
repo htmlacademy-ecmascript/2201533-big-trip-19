@@ -1,9 +1,10 @@
 import AbstractView from '../../framework/view/abstract-view';
 
 export default class FavoriteButton extends AbstractView{
-  constructor(active) {
+  constructor(active, onChange) {
     super();
     this.state = active;
+    this.element.addEventListener('click', onChange);
   }
 
   set state(active) {

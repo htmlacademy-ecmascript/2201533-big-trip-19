@@ -2,10 +2,10 @@ import ItemView from '../view/list/item-view';
 
 export default class Item {
   _form;
-  #view;
+  _view;
   constructor(form) {
     this._form = form;
-    this.#view = new ItemView();
+    this._view = new ItemView();
   }
 
   prepareForm(newOwner) {
@@ -25,6 +25,6 @@ export default class Item {
   submit = () => {};
 
   get element() {
-    return this.#view.element;
+    return this._view.element;
   }
 }

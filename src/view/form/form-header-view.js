@@ -43,7 +43,7 @@ export default class FormHeaderView extends AbstractTrickyView{
     this.element.append(this.#buttonCancel);
   };
 
-  update(point) {
+  update(point, onRollUp) {
     this.#buttonCancel.textContent = SubmitMode.DELETE.backText;
     this.#wrapper.type = point.type;
     this.#groupDestination.type = point.type;
@@ -52,6 +52,8 @@ export default class FormHeaderView extends AbstractTrickyView{
     this.#groupDate.dateFrom = point.dateFrom;
     this.#groupDate.dateTo = point.dateTo;
     this.#groupPrice.price = point.basePrice;
+    this.#buttonRollUp.render(this.element);
+    this.#buttonRollUp.onRollUp = onRollUp;
   }
 
   default() {
@@ -91,11 +93,6 @@ export default class FormHeaderView extends AbstractTrickyView{
   }
 
   #typeTitle = (type) => type ? `${type[0].toUpperCase()}${type.slice(1)}` : '';
-
-  renderRollUp = (onRollUp) => {
-    this.#buttonRollUp.render(this.element);
-    this.#buttonRollUp.onRollUp = onRollUp;
-  };
 
   get template() {
     return '<header class="event__header"></header>';

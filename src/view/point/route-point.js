@@ -19,7 +19,7 @@ export default class RoutePoint extends AbstractTrickyView{
   #favoriteButton;
   #rollupButton;
 
-  constructor(point, destination, offers) {
+  constructor(point, destination, offers, onRollUp, onChangeFavorite) {
     super();
     this.#eventDate = new EventDate();
     this.#typeBlock = new TypeBlock();
@@ -27,8 +27,8 @@ export default class RoutePoint extends AbstractTrickyView{
     this.#timeBlock = new BlockTime();
     this.#price = new PriceBlock();
     this.#offers = offers ? new ListOffers(offers) : false;
-    this.#favoriteButton = new FavoriteButton(point.isFavorite);
-    this.#rollupButton = new RollupButton();
+    this.#favoriteButton = new FavoriteButton(point.isFavorite, onChangeFavorite);
+    this.#rollupButton = new RollupButton(onRollUp);
     this._createElement();
     this.init(point, destination);
   }
@@ -101,12 +101,8 @@ export default class RoutePoint extends AbstractTrickyView{
     return this.#favoriteButton;
   }
 
-  get rollupButton() {
-    return this.#rollupButton;
-  }
-
-  get header() {
-    return this.element;
+  set disabled(disabled) {
+    this.#rollupButton.disabled = disabled;
   }
 
   get template() {

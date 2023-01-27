@@ -32,9 +32,9 @@ export default class Presenter {
       this.#index.init(this.addFormShow);
       this.#recalculate();
       this.#list.onSubmit = this.onSubmit;
+      this.#list.onChangeFavorite = this.onChangeFavorite;
       this.#list.init(this.#model);
       this.#list.onCancel = () => this.onCloseAddForm();
-      this.#list.onChangeFavorite = this.onChangeFavorite;
       this.#list.onChangeState = this.#onChangeListState;
       this.#sort.onChange = this.onSort;
       this.#filter.init();

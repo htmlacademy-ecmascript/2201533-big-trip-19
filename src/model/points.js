@@ -5,8 +5,6 @@ export default class Points {
   #list = [];
   #options;
 
-  //constructor() {}
-
   get length() {
     return this.#list.length;
   }

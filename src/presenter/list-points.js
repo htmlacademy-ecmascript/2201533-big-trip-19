@@ -13,7 +13,7 @@ export default class ListPoints {
   #form;
   onFormSubmit;
   #onChangeState;
-  #onChangeFavorite;
+  onChangeFavorite;
   #listView;
 
   constructor() {
@@ -52,10 +52,6 @@ export default class ListPoints {
 
   get view() {
     return this.#listView;
-  }
-
-  set onChangeFavorite(onChangeFavorite) {
-    this.#onChangeFavorite = onChangeFavorite;
   }
 
   set onChangeState(onChangeState) {
@@ -112,11 +108,9 @@ export default class ListPoints {
       point,
       this.#model.destinations[point.destination].name,
       point.offers.length > 0 ? this.#model.getOffers(point.type, point.offers) : false,
+      this.onFormSubmit,
+      this.onChangeFavorite
     );
-    item.routePoint.favoriteButton.element.addEventListener('click', () => {
-      this.#onChangeFavorite(point);
-    });
-    item.onSubmit = this.onFormSubmit;
     this.#listView.new(item);
   };
 

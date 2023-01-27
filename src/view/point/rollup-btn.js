@@ -3,8 +3,9 @@ import AbstractView from '../../framework/view/abstract-view';
 export default class RollupButton extends AbstractView{
   #onRollUp;
 
-  constructor() {
+  constructor(onRollUp) {
     super();
+    this.#onRollUp = onRollUp;
     this.element.addEventListener('click', () => {
       this.#onRollUp();
     });
