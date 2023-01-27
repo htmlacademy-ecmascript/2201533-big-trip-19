@@ -89,7 +89,7 @@ export default class Model {
     this.#rest.PUT(changedPoint, () => {
       point.isFavorite = !point.isFavorite;
       onChange(point);
-    });
+    }, () => {});
   };
 
   deletePoint = (point, onDelete, onError) => {

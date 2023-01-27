@@ -7,17 +7,13 @@ export default class ItemRollup extends Item {
   #point;
   onSubmit;
 
-  constructor(form, point, destination, offers) {
+  constructor(form, point, destination, offers, onSubmit, onChangeFavorite) {
     super(form);
     this.#point = point;
-    this.#routePoint = new RoutePoint(point, destination, offers);
-    this.#routePoint.rollupButton.onRollUp = this.showForm;
-    this.element.append(this.#routePoint.element);
+    this.#routePoint = new RoutePoint(point, destination, offers, this.showForm, () => {onChangeFavorite(point);});
+    this.onSubmit = onSubmit;
+    this._view.append(this.#routePoint);
   }
-
-  // set onSubmit(onSubmit) {
-  //   this.#onSubmit = onSubmit;
-  // }
 
   get idPoint() {
     return this.#point.id;
@@ -28,7 +24,7 @@ export default class ItemRollup extends Item {
   }
 
   set disabled(disabled) {
-    this.#routePoint.rollupButton.disabled = disabled;
+    this.#routePoint.disabled = disabled;
   }
 
   get routePoint() {
@@ -38,9 +34,8 @@ export default class ItemRollup extends Item {
   showForm = () => {
     super.prepareForm(this);
     super.showForm();
-    this._form.update(this.#point.copy);
-    this._form.header.renderRollUp(this.hideForm);
-    this.routePoint.element.replaceWith(this._form.element);
+    this._form.update(this.#point.copy, this.hideForm);
+    this._view.replace(this._form);
   };
 
   cancel = () => {
@@ -54,6 +49,6 @@ export default class ItemRollup extends Item {
   hideForm = () => {
     this._form.owner = null;
     this._form.default();
-    this._form.element.replaceWith(this.routePoint.element);
+    this._view.replace(this.routePoint);
   };
 }
