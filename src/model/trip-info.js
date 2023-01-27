@@ -108,13 +108,12 @@ export default class TripInfo {
   #infoDate() {
     const start = this.#startPoint.dateFrom;
     const end = this.#endPoint.dateTo;
-    /* eslint-disable no-irregular-whitespace*/ //отключаю правило еЗЛИнта, эти пробелы мне нужны в разметке
     if (start.year() !== end.year()) {
-      return `${start.format('YYYY MMM DD')} — ${end.format('YYYY MMM DD')}`;
+      return `${start.format('YYYY MMM DD')} — ${end.format('YYYY MMM DD')}`;
     }
     if (start.month() !== end.month()) {
-      return `${start.format('MMM DD')} — ${end.format('MMM DD')}`;
+      return `${start.format('MMM DD')} — ${end.format('MMM DD')}`;
     }
-    return `${start.format('MMM DD')} — ${end.format('DD')}`;
+    return `${start.format('MMM DD')} — ${end.format('DD')}`;
   }
 }
