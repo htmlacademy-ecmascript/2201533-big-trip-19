@@ -109,10 +109,6 @@ export default class EditFormView extends AbstractTrickyView {
     return this.#header.buttonSubmit;
   }
 
-  get header() {
-    return this.#header;
-  }
-
   get template() {
     return `<form class="event event--edit" action="#" method="post">
               <section class="event__details"></section>

@@ -1,9 +1,7 @@
 import {newDestination} from './from-json';
-import Destination from './destination';
 
 export default class Destinations {
   #list = [];
-  '-1' = new Destination();
 
   get list() {
     return this.#list;

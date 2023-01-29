@@ -16,12 +16,6 @@ export default class TripInfo {
     }
   }
 
-  #setParams() {
-    this.#setEndPoint();
-    this.#setStartPoint();
-    this.#setUniqDestinations();
-  }
-
   get data() {
     if (this.#points.length === 0) {
       return false;
@@ -33,35 +27,41 @@ export default class TripInfo {
     };
   }
 
-  #setStartPoint() {
+  #setParams = () => {
+    this.#setEndPoint();
+    this.#setStartPoint();
+    this.#setUniqDestinations();
+  };
+
+  #setStartPoint = () => {
     this.#startPoint = this.#points.start;
-  }
+  };
 
-  #setEndPoint() {
+  #setEndPoint = () => {
     this.#endPoint = this.#points.end;
-  }
+  };
 
-  #setUniqDestinations() {
+  #setUniqDestinations = () => {
     this.#uniqDestinations = new Set(Array.from(this.#points.list, (point) => point.destination));
-  }
+  };
 
-  recalculate(model) {
+  recalculate = (model) => {
     this.#points.list.forEach((point) => {
       point.recalculate(model);
       this.#fullPrice += point.pricePoint;
     });
-  }
+  };
 
-  #checkExtreme(point) {
+  #checkExtreme = (point) => {
     if (point.dateFrom < this.#startPoint.dateFrom) {
       this.#startPoint.dateFrom = point;
     }
     if (point.dateTo > this.#endPoint.dateFrom) {
       this.#endPoint = point;
     }
-  }
+  };
 
-  afterDelete(point) {
+  afterDelete = (point) => {
     if (this.#points.length === 0) {
       this.#uniqDestinations = null;
       this.#startPoint = undefined;
@@ -77,16 +77,16 @@ export default class TripInfo {
     }
     this.#setUniqDestinations();
     this.#fullPrice -= point.pricePoint;
-  }
+  };
 
-  afterAdd(point) {
+  afterAdd = (point) => {
     this.#fullPrice += point.pricePoint;
     if (!this.#startPoint){
       this.#setParams();
     }
-  }
+  };
 
-  afterAlter(point, alter, delta) {
+  afterAlter = (point, alter, delta) => {
     if (alter.includes(FormFields.DATE_FROM) || alter.includes(FormFields.DATE_TO)) {
       this.#checkExtreme(point);
     }
@@ -94,18 +94,18 @@ export default class TripInfo {
       this.#setUniqDestinations();
     }
     this.#fullPrice += delta;
-  }
+  };
 
-  #infoTitle() {
+  #infoTitle = () => {
     const destinations = new Set(this.#uniqDestinations);
     destinations.delete(this.#startPoint.destination);
     destinations.delete(this.#endPoint.destination);
     return `${this.#model.destinations[this.#startPoint.destination].name} — ${
       destinations.size === 1 ? this.#model.destinations[destinations.values().next().value] : '. . .'} — ${
       this.#model.destinations[this.#endPoint.destination].name}`;
-  }
+  };
 
-  #infoDate() {
+  #infoDate = () => {
     const start = this.#startPoint.dateFrom;
     const end = this.#endPoint.dateTo;
     if (start.year() !== end.year()) {
@@ -115,5 +115,5 @@ export default class TripInfo {
       return `${start.format('MMM DD')} — ${end.format('MMM DD')}`;
     }
     return `${start.format('MMM DD')} — ${end.format('DD')}`;
-  }
+  };
 }
