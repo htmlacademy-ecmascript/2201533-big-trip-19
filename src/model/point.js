@@ -70,7 +70,7 @@ export default class Point {
     this.#fullPrice = this.offers.reduce((accumulator, currentValue) =>
       accumulator + owner.typeOfOffers[this.type].find((offer) => offer.id === currentValue).price
     , this.basePrice);
-  }
+  };
 
   #newKey = (oldKey) => {
     let newKey = oldKey;
