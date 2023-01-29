@@ -2,6 +2,7 @@ import {FilterAttrs} from '../settings';
 
 export default class FiltersModel {
   currentDate;
+
   everything = () => true;
   future = (point) => point.dateFrom > this.currentDate;
   present = (point) => point.dateFrom <= this.currentDate && point.dateTo >= this.currentDate;

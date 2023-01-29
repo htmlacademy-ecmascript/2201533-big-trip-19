@@ -79,6 +79,7 @@ export default class Presenter {
       this.#blockInterface(false);
       onError();
     })) {
+      this.#blockInterface(false);
       this.#list.hideForm();
     }
   };

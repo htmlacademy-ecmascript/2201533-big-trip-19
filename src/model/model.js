@@ -5,6 +5,7 @@ import Destinations from './destinations';
 import LoadData from './load-data';
 import FiltersModel from './filters-model';
 import dayjs from 'dayjs';
+import {FormFields} from '../settings';
 
 export default class Model {
   #info;
@@ -59,8 +60,8 @@ export default class Model {
   getPoint = (id) => id > -1 ? this.#points.findID(id) : new Point();
 
   post = (point, onAdd, onError) => {
-    this.#rest.POST(point.localPoint, (resp) => {
-      point.id = parseInt(resp.id, 10);
+    this.#rest.POST(point.forAddPoint, (response) => {
+      point.id = parseInt(response.id, 10);
       this.#points.add(point);
       point.recalculate(this);
       this.#info.afterAdd(point);
@@ -75,7 +76,7 @@ export default class Model {
     }
     this.#rest.PUT(point, () => {
       const alter = pointModel.alter(point);
-      if (alter.includes('basePrice') || alter.includes('offers')) {
+      if (alter.includes(FormFields.PRICE) || alter.includes(FormFields.OFFERS)) {
         point.recalculate(this);
       }
       this.#info.afterAlter(point, alter, point.pricePoint - pointModel.pricePoint);
@@ -89,7 +90,8 @@ export default class Model {
     this.#rest.PUT(changedPoint, () => {
       point.isFavorite = !point.isFavorite;
       onChange(point);
-    }, () => {});
+    }, () => {
+    });
   };
 
   deletePoint = (point, onDelete, onError) => {

@@ -7,11 +7,10 @@ const getRandomInt = (start, end) => {
   return Math.floor((max - min + 1) * Math.random() + min);
 };
 
-
 export default class RandomString {
   #MIN_LENGTH = 5;
   #MAX_LENGTH = 15;
-  #value;
+
   #generate = () => {
     const codes = Array.from(
       new Array(getRandomInt(this.#MIN_LENGTH, this.#MAX_LENGTH)), () => {
@@ -28,9 +27,7 @@ export default class RandomString {
     return String.fromCharCode.apply(null, codes);
   };
 
-  get = () => this.#value;
-
-  constructor() {
-    this.#value = this.#generate();
+  get value() {
+    return this.#generate();
   }
 }

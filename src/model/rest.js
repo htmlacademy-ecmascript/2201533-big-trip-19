@@ -1,21 +1,15 @@
 import RandomString from './random-string.js';
+import {BASE_URL, Endpoints} from '../settings';
 
 export default class Rest {
-  #BASE_URL = 'https://19.ecmascript.pages.academy/big-trip/';
-  #endpoints = {
-    points: 'points',
-    destinations: 'destinations',
-    offers: 'offers'
-  };
-
   #randomString;
 
   constructor() {
-    this.#randomString = new RandomString().get();
+    this.#randomString = new RandomString().value;
   }
 
   #get = (endpoint, onSuccess, onError) => {
-    const url = `${this.#BASE_URL}${endpoint}`;
+    const url = `${BASE_URL}${endpoint}`;
     fetch(url, {
       method: 'GET',
       headers: {
@@ -37,7 +31,7 @@ export default class Rest {
   };
 
   DELETE = (id, onSuccess, onError) => {
-    const url = `${this.#BASE_URL}${this.#endpoints.points}/${id}`;
+    const url = `${BASE_URL}${Endpoints.POINTS}/${id}`;
     fetch(url, {
       method: 'DELETE',
       headers: {
@@ -56,7 +50,7 @@ export default class Rest {
   };
 
   PUT = (point, onSuccess, onError) => {
-    const url = `${this.#BASE_URL}${this.#endpoints.points}/${point.id}`;
+    const url = `${BASE_URL}${Endpoints.POINTS}/${point.id}`;
     fetch(url, {
       method: 'PUT',
       headers: {
@@ -77,7 +71,7 @@ export default class Rest {
   };
 
   POST = (point, onSuccess, onError) => {
-    const url = `${this.#BASE_URL}${this.#endpoints.points}`;
+    const url = `${BASE_URL}${Endpoints.POINTS}`;
     fetch(url, {
       method: 'POST',
       headers: {
@@ -99,14 +93,13 @@ export default class Rest {
 
   GET = {
     points: (onSuccess, onError) => {
-      this.#get(this.#endpoints.points, onSuccess, onError);
+      this.#get(Endpoints.POINTS, onSuccess, onError);
     },
     destinations: (onSuccess, onError) => {
-      this.#get(this.#endpoints.destinations, onSuccess, onError);
+      this.#get(Endpoints.DESTINATIONS, onSuccess, onError);
     },
     offers: (onSuccess, onError) => {
-      this.#get(this.#endpoints.offers, onSuccess, onError);
+      this.#get(Endpoints.OFFERS, onSuccess, onError);
     }
   };
-
 }
