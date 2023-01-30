@@ -85,6 +85,8 @@ const FILL_POINTS = true;
 
 const BASE_URL = 'https://19.ecmascript.pages.academy/big-trip/';
 
+const ENDPOINTS = ['points', 'destinations','offers'];
+
 const Endpoints = {
   POINTS: 'points',
   DESTINATIONS: 'destinations',
@@ -93,6 +95,6 @@ const Endpoints = {
 
 export {
   Icons, Order, PromptTexts, SubmitMode, FilterAttrs, SortAttrs, BASE_URL, Endpoints,
-  DIFF_CLICK, FormFields, ViewMode, ENDPOINT, FILL_POINTS, BLOCK_LIMITS
+  DIFF_CLICK, FormFields, ViewMode, ENDPOINT, FILL_POINTS, BLOCK_LIMITS, ENDPOINTS
 };
 
