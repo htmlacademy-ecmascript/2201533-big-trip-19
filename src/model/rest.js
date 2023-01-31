@@ -28,12 +28,12 @@ export default class Rest {
           }
         };
       })
-      .then((r) => {
-        if(r.error){
-          loader.addError(r.error);
+      .then((response) => {
+        if(response.error){
+          loader.addError(response.error);
           return false;
         }
-        loader[endpoint](r);
+        loader[endpoint](response);
         return true;
       })
       .catch((err) => {throw err;})

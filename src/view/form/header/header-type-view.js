@@ -10,7 +10,7 @@ export default class HeaderTypeView extends AbstractTrickyView {
   #buttonType;
   #fieldSet;
   #input;
-  #disabled;
+  #disabled = false;
   onChange;
   constructor(types) {
     super();
@@ -91,7 +91,7 @@ export default class HeaderTypeView extends AbstractTrickyView {
         NONE: 'block',
         '': 'block'
       };
-      listTypes.style.display = States[listTypes.style.display];
+      listTypes.style.display = States[listTypes.style.display.toUpperCase()];
     });
 
     listTypes.append(this.#fieldSet);

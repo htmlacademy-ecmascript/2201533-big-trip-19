@@ -54,9 +54,9 @@ export default class TripInfo {
 
   #checkExtreme = (point) => {
     if (point.dateFrom < this.#startPoint.dateFrom) {
-      this.#startPoint.dateFrom = point;
+      this.#startPoint = point;
     }
-    if (point.dateTo > this.#endPoint.dateFrom) {
+    if (point.dateFrom > this.#endPoint.dateFrom) {
       this.#endPoint = point;
     }
   };
@@ -83,6 +83,9 @@ export default class TripInfo {
     this.#fullPrice += point.pricePoint;
     if (!this.#startPoint){
       this.#setParams();
+    }else {
+      this.#checkExtreme(point);
+      this.#setUniqDestinations();
     }
   };
 

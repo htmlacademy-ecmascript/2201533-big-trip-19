@@ -13,7 +13,7 @@ export default class HeaderPriceGroup extends AbstractTrickyView {
   _createElement = () => {
     super._createElement();
     this.#input = createElement(`<input class="event__input  event__input--price" id="event-price"
-      type="text" name="event-price" value="">`);
+      type="text" name="event-price" value="0">`);
     this.#input.addEventListener('change', () => {
       this.onChange(parseInt(this.#input.value, 10));
     });
