@@ -1,5 +1,5 @@
 import RandomString from './random-string.js';
-import {BASE_URL, Endpoints} from '../settings';
+import {BASE_URL, ENDPOINTS, Endpoints} from '../settings';
 
 export default class Rest {
   #randomString;
@@ -8,27 +8,38 @@ export default class Rest {
     this.#randomString = new RandomString().value;
   }
 
-  #get = (endpoint, onSuccess, onError) => {
-    const url = `${BASE_URL}${endpoint}`;
-    fetch(url, {
+  GET(loader) {
+    const init = {
       method: 'GET',
       headers: {
         Authorization: `Basic ${this.#randomString}`
       }
-    })
+    };
+    const fetchers = Array.from(ENDPOINTS, (endpoint) => fetch(`${BASE_URL}${endpoint}`, init)
       .then((response) => {
         if (response.ok) {
           return response.json();
         }
-        throw {
-          status: response.status,
-          statusText: response.statusText,
-          endpoint: endpoint
+        return {
+          error: {
+            status: response.status,
+            statusText: response.statusText,
+            endpoint: endpoint
+          }
         };
       })
-      .then(onSuccess)
-      .catch(onError);
-  };
+      .then((r) => {
+        if(r.error){
+          loader.addError(r.error);
+          return false;
+        }
+        loader[endpoint](r);
+        return true;
+      })
+      .catch((err) => {throw err;})
+    );
+    return Promise.all(fetchers);
+  }
 
   DELETE = (id, onSuccess, onError) => {
     const url = `${BASE_URL}${Endpoints.POINTS}/${id}`;
@@ -89,17 +100,5 @@ export default class Rest {
       })
       .then(onSuccess)
       .catch(onError);
-  };
-
-  GET = {
-    points: (onSuccess, onError) => {
-      this.#get(Endpoints.POINTS, onSuccess, onError);
-    },
-    destinations: (onSuccess, onError) => {
-      this.#get(Endpoints.DESTINATIONS, onSuccess, onError);
-    },
-    offers: (onSuccess, onError) => {
-      this.#get(Endpoints.OFFERS, onSuccess, onError);
-    }
   };
 }

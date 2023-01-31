@@ -90,10 +90,10 @@ export default class MainView {
       const errorsStr = Array.from(errors, (err) =>
         `${PromptTexts.error.replace(ENDPOINT, err.endpoint)} ${err.status}, ${err.statusText}`
       ).join('\n');
-      this.#prompt.innerText = DOMPurify.sanitize(errorsStr);
+      this.#prompt.element.innerText = DOMPurify.sanitize(errorsStr);
     }
     else{
-      this.#prompt.textContent = errors[0];
+      this.#prompt.element.textContent = errors[0];
     }
   }
 }
