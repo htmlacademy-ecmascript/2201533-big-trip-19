@@ -43,6 +43,10 @@ export default class FormHeaderView extends AbstractTrickyView{
     this.element.append(this.#buttonCancel);
   };
 
+  init = () => {
+    this.#groupDate.default();
+  };
+
   update(point, onRollUp) {
     this.#buttonCancel.textContent = SubmitMode.DELETE.backText;
     this.#wrapper.type = point.type;

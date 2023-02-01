@@ -93,8 +93,18 @@ const Endpoints = {
   OFFERS: 'offers'
 };
 
+const MIN_DURATION = {
+  seconds: 0,
+  minutes: 1,
+  hours: 0,
+  days: 0,
+  weeks: 0,
+  months: 0,
+  years: 0
+};
+
 export {
   Icons, Order, PromptTexts, SubmitMode, FilterAttrs, SortAttrs, BASE_URL, Endpoints,
-  DIFF_CLICK, FormFields, ViewMode, ENDPOINT, FILL_POINTS, BLOCK_LIMITS, ENDPOINTS
+  DIFF_CLICK, FormFields, ViewMode, ENDPOINT, FILL_POINTS, BLOCK_LIMITS, ENDPOINTS, MIN_DURATION
 };
 

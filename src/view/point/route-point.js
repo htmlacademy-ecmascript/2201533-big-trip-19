@@ -64,10 +64,10 @@ export default class RoutePoint extends AbstractTrickyView{
       },
       dateFrom: () => {
         this.#eventDate.date = point.dateFrom;
-        this.#timeBlock.date = point.dateFrom;
+        this.#timeBlock.start = point.dateFrom;
       },
       dateTo: () => {
-        this.#timeBlock.date = point.dateTo;
+        this.#timeBlock.end = point.dateTo;
       },
       destination: () => {
       },

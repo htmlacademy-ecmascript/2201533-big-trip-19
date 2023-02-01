@@ -36,6 +36,12 @@ export default class EditFormView extends AbstractTrickyView {
     });
   };
 
+  init = (point) => {
+    this.point = point;
+    this.#header.init();
+    this.buttonCancel.textContent = 'Cancel';
+  };
+
   #callBacks = {
     onChangeType: (type) => {
       this.point.type = type;

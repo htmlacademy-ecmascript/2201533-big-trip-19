@@ -27,8 +27,7 @@ export default class ItemNewForm extends Item {
   showForm = () => {
     super.prepareForm(this);
     super.showForm();
-    this._form.point = this.#point;
-    this._form.buttonCancel.textContent = 'Cancel';
+    this._form.init(this.#point);
     this.element.append(this._form.element);
     this.list.element.prepend(this.element);
   };
