@@ -8,13 +8,13 @@ export default class TripInfo {
   #points;
   #model;
 
-  init(model) {
+  init = (model) => {
     this.#model = model;
     this.#points = model.points;
     if (this.#points.length){
       this.#setParams();
     }
-  }
+  };
 
   get data() {
     if (this.#points.length === 0) {
