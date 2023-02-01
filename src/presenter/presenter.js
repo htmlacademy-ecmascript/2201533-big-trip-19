@@ -88,20 +88,20 @@ export default class Presenter {
     this.#index.sort = emptyList;
   };
 
-  #blockInterface(block) {
+  #blockInterface = (block) => {
     this.#list.blockInterface(block);
     this.#filter.disabled = block;
     this.#sort.disabled = block;
     this.#index.disabled = block;
     const action = block ? 'block' : 'unblock';
     this.#blocker[action]();
-  }
+  };
 
-  #recalculate() {
+  #recalculate = () => {
     if (this.#model.info.data) {
       this.#info.data = this.#model.info.data;
     }
     this.#index.info = !(this.#model.info.data);
     this.#filter.disableItems = this.#model.existFilters;
-  }
+  };
 }
