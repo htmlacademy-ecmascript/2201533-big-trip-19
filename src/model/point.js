@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 
 export default class Point {
   #fullPrice = 0;
-  basePrice = 0;
+  basePrice;
   dateFrom;
   dateTo;
   destination = -1;
@@ -12,13 +12,13 @@ export default class Point {
   type = '';
 
   constructor(basePrice, dateFrom , dateTo, destination, id , isFavorite, offers, type) {
-    this.basePrice = basePrice;
+    this.basePrice = basePrice || 0;
     this.dateFrom = dateFrom || dayjs();
     this.dateTo = dateTo || dayjs();
     this.destination = destination;
     this.id = id;
-    this.isFavorite = isFavorite;
-    this.offers = offers;
+    this.isFavorite = isFavorite || this.isFavorite;
+    this.offers = offers || this.offers;
     this.type = type;
   }
 

@@ -41,7 +41,7 @@ export default class EditFormView extends AbstractTrickyView {
       this.point.type = type;
       this.point.offers = [];
       if (this.#sectionOffers) {
-        this.#sectionOffers.remove();
+        this.#sectionOffers.element.remove();
       }
       this.#setSectionOffers();
       if (this.#sectionOffers) {
@@ -51,7 +51,7 @@ export default class EditFormView extends AbstractTrickyView {
     onChangeDestination: (destination) => {
       this.point.destination = destination.id;
       if (this.#sectionDestination) {
-        this.#sectionDestination.remove();
+        this.#sectionDestination.element.remove();
       }
       this.#setSectionDestination(destination);
     },
@@ -80,7 +80,7 @@ export default class EditFormView extends AbstractTrickyView {
       this.#sectionOffers = false;
     }
     if (this.#sectionDestination) {
-      this.#sectionDestination.remove();
+      this.#sectionDestination.element.remove();
       this.#sectionDestination = false;
     }
     this.#header.default();
@@ -95,9 +95,9 @@ export default class EditFormView extends AbstractTrickyView {
   #setSectionDestination(destination) {
     const isNew = this.point.id === -1;
     this.#sectionDestination = destination.description || (destination.pictures.length > 0 && isNew) ?
-      new FormDestinationView(destination, isNew).element : false;
+      new FormDestinationView(destination, isNew) : false;
     if (this.#sectionDestination) {
-      this.#details.append(this.#sectionDestination);
+      this.#details.append(this.#sectionDestination.element);
     }
   }
 
