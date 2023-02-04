@@ -18,7 +18,8 @@ const FormFields = {
   DESTINATION: 'destination',
   TYPE: 'type',
   TITLE: 'title',
-  PRICE: 'basePrice'
+  PRICE: 'basePrice',
+  FULL_PRICE: 'fullPrice'
 };
 
 const SortAttrs = {
@@ -83,7 +84,7 @@ const ViewMode = {
 
 const FILL_POINTS = true;
 
-const BASE_URL = 'https://19.ecmascript.pages.academy/big-trip/';
+const BASE_URL = 'https://19.ecmascript.pages.academy/big-trip';
 
 const ENDPOINTS = ['points', 'destinations','offers'];
 
@@ -103,8 +104,16 @@ const MIN_DURATION = {
   years: 0
 };
 
+const VIEW_EVENT_PRICE = FormFields.FULL_PRICE;
+
+const LengthRandomString = {
+  MIN: 5,
+  MAX: 15
+};
+
 export {
   Icons, Order, PromptTexts, SubmitMode, FilterAttrs, SortAttrs, BASE_URL, Endpoints,
-  DIFF_CLICK, FormFields, ViewMode, ENDPOINT, FILL_POINTS, BLOCK_LIMITS, ENDPOINTS, MIN_DURATION
+  DIFF_CLICK, FormFields, ViewMode, ENDPOINT, FILL_POINTS, BLOCK_LIMITS, ENDPOINTS, MIN_DURATION,
+  VIEW_EVENT_PRICE, LengthRandomString
 };
 

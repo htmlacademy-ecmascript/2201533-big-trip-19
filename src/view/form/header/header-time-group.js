@@ -8,7 +8,6 @@ import {MIN_DURATION} from '../../../settings';
 
 export default class HeaderTimeGroup extends AbstractTrickyView {
   #inputs = {};
-  onChange;
   #format = 'DD/MM/YY HH:mm';
   #fields = [
     {
@@ -25,25 +24,14 @@ export default class HeaderTimeGroup extends AbstractTrickyView {
     }
   ];
 
-  #constraint = (index) => {
-    switch (index) {
-      case 0 :
-        this.#inputs.startPkr.config.maxDate =
-          (dayjs(this.#inputs.dateTo.value, this.#format).subtract(dayjs.duration(MIN_DURATION))).format(this.#format);
-        break;
-      case 1 :
-        this.#inputs.endPkr.config.minDate =
-          (dayjs(this.#inputs.dateFrom.value, this.#format).add(dayjs.duration(MIN_DURATION))).format(this.#format);
-        break;
-    }
-  };
+  onChange;
 
   constructor() {
     super();
-    this._createElement();
+    this.init();
   }
 
-  _createElement = () => {
+  init = () => {
     super._createElement();
     this.#fields.forEach((field,index) => {
       this.element.append(this.#createLabel(field.title));
@@ -68,7 +56,7 @@ export default class HeaderTimeGroup extends AbstractTrickyView {
       dateFormat: 'd/m/y H:i',
       onOpen : (selectedDates, dateStr, instance) => {
         instance.setDate(input.value);
-        this.#constraint(index);
+        this.#setBoundForDates(index);
       }
     });
     input.addEventListener('change', (evt) => {
@@ -78,10 +66,8 @@ export default class HeaderTimeGroup extends AbstractTrickyView {
     return input;
   };
 
-  default() {
-    const currentDate = dayjs();
-    this.dateFrom = currentDate;
-    this.dateTo = currentDate.add(dayjs.duration(MIN_DURATION));
+  get template() {
+    return '<div class="event__field-group  event__field-group--time"></div>';
   }
 
   set dateFrom(date) {
@@ -96,7 +82,22 @@ export default class HeaderTimeGroup extends AbstractTrickyView {
     Object.values(this.#inputs).forEach((input) => {input.disabled = disabled;});
   }
 
-  get template() {
-    return '<div class="event__field-group  event__field-group--time"></div>';
-  }
+  setDefault = () => {
+    const currentDate = dayjs();
+    this.dateFrom = currentDate;
+    this.dateTo = currentDate.add(dayjs.duration(MIN_DURATION));
+  };
+
+  #setBoundForDates = (index) => {
+    switch (index) {
+      case 0 :
+        this.#inputs.startPkr.config.maxDate =
+          (dayjs(this.#inputs.dateTo.value, this.#format).subtract(dayjs.duration(MIN_DURATION))).format(this.#format);
+        break;
+      case 1 :
+        this.#inputs.endPkr.config.minDate =
+          (dayjs(this.#inputs.dateFrom.value, this.#format).add(dayjs.duration(MIN_DURATION))).format(this.#format);
+        break;
+    }
+  };
 }

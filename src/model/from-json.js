@@ -20,11 +20,11 @@ const newPointFromJson = (json) => new Point(
   json.type
 );
 
-const newDestination = (json) => new Destination(
+const newDestinationFromJson = (json) => new Destination(
   json.id,
   json.description,
   json.name,
   Array.from(json.pictures, (picture) => new Picture(picture.src, picture.description))
 );
 
-export {newPointFromJson, newDestination};
+export {newPointFromJson, newDestinationFromJson};

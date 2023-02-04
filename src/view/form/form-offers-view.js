@@ -6,10 +6,10 @@ export default class FormOffersView extends AbstractTrickyView {
   #inputs = [];
   constructor(pointOffers, typeOffers) {
     super();
-    this._createElement(pointOffers, typeOffers);
+    this.init(pointOffers, typeOffers);
   }
 
-  _createElement = (pointOffers, typeOffers) => {
+  init = (pointOffers, typeOffers) => {
     super._createElement();
     const mapOffers = new Map;
     const container = createElement('<div class="event__available-offers"></div>');
@@ -42,13 +42,13 @@ export default class FormOffersView extends AbstractTrickyView {
     });
   };
 
-  set disabled(disabled) {
-    this.#inputs.forEach((input) => {input.disabled = disabled;});
-  }
-
   get template() {
     return `<section class="event__section  event__section--offers">
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
       </section>`;
+  }
+
+  set disabled(disabled) {
+    this.#inputs.forEach((input) => {input.disabled = disabled;});
   }
 }

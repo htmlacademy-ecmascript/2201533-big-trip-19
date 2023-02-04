@@ -17,20 +17,22 @@ export default class FormHeaderView extends AbstractTrickyView{
   #groupPrice;
   #wrapper;
   #destinations;
+  #typeTitle = (type) => type ? `${type[0].toUpperCase()}${type.slice(1)}` : '';
 
   constructor(types, destinations) {
     super();
     this.#destinations = destinations;
     this.#wrapper = new HeaderTypeView(types);
     this.#groupDestination = new FormDestinationsView(destinations.list);
+    this.init();
+  }
+
+  init = () => {
+    super._createElement();
     this.#labelType = this.#groupDestination.labelType;
     this.#groupDate = new HeaderTimeGroup();
     this.#groupPrice = new HeaderPriceGroup();
     this.#buttonRollUp = new RollupButton();
-  }
-
-  _createElement = () => {
-    super._createElement();
     this.#buttonCancel =
       createElement('<button class="event__reset-btn" type="reset">Cancel</button>');
     this.#buttonSubmit =
@@ -43,11 +45,11 @@ export default class FormHeaderView extends AbstractTrickyView{
     this.element.append(this.#buttonCancel);
   };
 
-  init = () => {
-    this.#groupDate.default();
+  initNew = () => {
+    this.#groupDate.setDefault();
   };
 
-  update(point, onRollUp) {
+  update = (point, onRollUp) => {
     this.#buttonCancel.textContent = SubmitMode.DELETE.backText;
     this.#wrapper.type = point.type;
     this.#groupDestination.type = point.type;
@@ -58,14 +60,14 @@ export default class FormHeaderView extends AbstractTrickyView{
     this.#groupPrice.price = point.basePrice;
     this.#buttonRollUp.render(this.element);
     this.#buttonRollUp.onRollUp = onRollUp;
-  }
+  };
 
-  default() {
+  setDefault() {
     this.#buttonRollUp.remove();
-    this.#wrapper.default();
+    this.#wrapper.setDefault();
     this.#groupPrice.price = 0;
-    this.#groupDate.default();
-    this.#groupDestination.default();
+    this.#groupDate.setDefault();
+    this.#groupDestination.setDefault();
   }
 
   get buttonCancel() {
@@ -76,14 +78,18 @@ export default class FormHeaderView extends AbstractTrickyView{
     return this.#buttonSubmit;
   }
 
-  set callBacks(callBacks) {
+  get template() {
+    return '<header class="event__header"></header>';
+  }
+
+  set callbacks(callbacks) {
     this.#wrapper.onChange = (type) => {
       this.#labelType.textContent = this.#typeTitle(type);
-      callBacks.onChangeType(type);
+      callbacks.onChangeType(type);
     };
-    this.#groupDestination.onChange = callBacks.onChangeDestination;
-    this.#groupDate.onChange = callBacks.onChangeDate;
-    this.#groupPrice.onChange = callBacks.onChangePrice;
+    this.#groupDestination.onChange = callbacks.onChangeDestination;
+    this.#groupDate.onChange = callbacks.onChangeDate;
+    this.#groupPrice.onChange = callbacks.onChangePrice;
   }
 
   set disabled(disabled) {
@@ -94,11 +100,5 @@ export default class FormHeaderView extends AbstractTrickyView{
     this.#groupDestination.disabled = disabled;
     this.#groupDate.disabled = disabled;
     this.#groupPrice.disabled = disabled;
-  }
-
-  #typeTitle = (type) => type ? `${type[0].toUpperCase()}${type.slice(1)}` : '';
-
-  get template() {
-    return '<header class="event__header"></header>';
   }
 }

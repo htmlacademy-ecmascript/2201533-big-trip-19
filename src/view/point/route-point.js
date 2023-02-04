@@ -8,6 +8,7 @@ import TypeBlock from './event-type-view';
 import EventTitle from './event-title-view';
 import BlockTime from './event-time-view';
 import PriceBlock from './event-price-view';
+import {VIEW_EVENT_PRICE} from '../../settings';
 
 export default class RoutePoint extends AbstractTrickyView{
   #eventDate;
@@ -33,7 +34,7 @@ export default class RoutePoint extends AbstractTrickyView{
     this.init(point, destination);
   }
 
-  _createElement = () => {
+  init = (point, destination) => {
     super._createElement();
     this.element.append(this.#eventDate.element);
     this.element.append(this.#typeBlock.element);
@@ -45,22 +46,19 @@ export default class RoutePoint extends AbstractTrickyView{
     }
     this.element.append(this.#favoriteButton.element);
     this.element.append(this.#rollupButton.element);
-  };
-
-  init(point, destination) {
     this.#eventDate.date = point.dateFrom;
     this.#typeBlock.type = point.type;
     this.#eventTitle.title = {type: point.type, destination: destination};
     this.#timeBlock.start = point.dateFrom;
     this.#timeBlock.end = point.dateTo;
     this.#timeBlock.duration = {start: point.dateFrom, end: point.dateTo};
-    this.#price.price = point.basePrice;
-  }
+    this.#price.price = point[VIEW_EVENT_PRICE];
+  };
 
-  update(point, alter, destination, offers) {
+  update = (point, changes, destination, offers) => {
     const change = {
       basePrice: () => {
-        this.#price.price = point.basePrice;
+        this.#price.price = point[VIEW_EVENT_PRICE];
       },
       dateFrom: () => {
         this.#eventDate.date = point.dateFrom;
@@ -83,6 +81,7 @@ export default class RoutePoint extends AbstractTrickyView{
         } else {
           this.#offers = false;
         }
+        this.#price.price = point[VIEW_EVENT_PRICE];
       },
       type: () => {
         this.#typeBlock.type = point.type;
@@ -94,18 +93,18 @@ export default class RoutePoint extends AbstractTrickyView{
         this.#eventTitle.title = {type: point.type, destination: destination};
       }
     };
-    alter.forEach((field) => change[field]());
-  }
+    changes.forEach((field) => change[field]());
+  };
 
   get favoriteButton() {
     return this.#favoriteButton;
   }
 
-  set disabled(disabled) {
-    this.#rollupButton.disabled = disabled;
-  }
-
   get template() {
     return '<div class="event"></div>';
+  }
+
+  set disabled(disabled) {
+    this.#rollupButton.disabled = disabled;
   }
 }

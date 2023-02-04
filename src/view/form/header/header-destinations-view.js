@@ -4,18 +4,18 @@ import DOMPurify from 'dompurify';
 
 export default class HeaderDestinationsView extends AbstractTrickyView{
   #labelType;
-  onChange;
   #destination;
   #inputDestination;
   #destinations;
+  onChange;
 
   constructor(destinations) {
     super();
     this.#destinations = destinations;
-    this._createElement();
+    this.init();
   }
 
-  _createElement() {
+  init = () => {
     super._createElement();
     this.#labelType = createElement(
       '<label class="event__label  event__type-output" for="event-destination"></label>');
@@ -32,12 +32,7 @@ export default class HeaderDestinationsView extends AbstractTrickyView{
     });
     this.element.prepend(this.#inputDestination);
     this.element.prepend(this.#labelType);
-  }
-
-  default() {
-    this.name = '';
-    this.#labelType.textContent = '';
-  }
+  };
 
   get destination() {
     return this.#destination;
@@ -45,6 +40,16 @@ export default class HeaderDestinationsView extends AbstractTrickyView{
 
   get labelType() {
     return this.#labelType;
+  }
+
+  get template() {
+    return DOMPurify.sanitize(
+      `<div class="event__field-group  event__field-group--destination">
+        <datalist id="destination-list">
+          ${Array.from(this.#destinations, (elem) => `<option value="${elem.name}"></option>`).join('')}
+        </datalist>
+      </div>`
+    );
   }
 
   set name(name) {
@@ -59,13 +64,8 @@ export default class HeaderDestinationsView extends AbstractTrickyView{
     this.#labelType.textContent = `${type[0].toUpperCase()}${type.slice(1)}`;
   }
 
-  get template() {
-    return DOMPurify.sanitize(
-      `<div class="event__field-group  event__field-group--destination">
-        <datalist id="destination-list">
-          ${Array.from(this.#destinations, (elem) => `<option value="${elem.name}"></option>`).join('')}
-        </datalist>
-      </div>`
-    );
-  }
+  setDefault = () => {
+    this.name = '';
+    this.#labelType.textContent = '';
+  };
 }

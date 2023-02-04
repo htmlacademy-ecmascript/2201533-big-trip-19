@@ -47,26 +47,26 @@ export default class MainView {
     }
   }
 
-  fill(list) {
+  set new(item) {
+    this.#items[item.idPoint] = item;
+  }
+
+  fill = (list) => {
     this.#list.element.replaceChildren();
     list.forEach((point) => {
       this.#list.element.append(this.#items[point.id].element);
     });
-  }
+  };
 
-  new(item) {
-    this.#items[item.idPoint] = item;
-  }
-
-  add(id) {
+  add = (id) => {
     this.#list.element.append(this.#items[id].element);
-  }
+  };
 
-  insert(idPoint, idBefore) {
+  insert = (idPoint, idBefore) => {
     this.#list.element.insertBefore(this.#items[idPoint].element, this.#items[idBefore].element);
-  }
+  };
 
-  relocation(relocationOptions) {
+  relocation = (relocationOptions) => {
     const item = this.#items[relocationOptions.delete].element;
     item.remove();
     if (relocationOptions.before) {
@@ -74,18 +74,18 @@ export default class MainView {
     } else {
       this.#list.element.append(item);
     }
-  }
+  };
 
-  delete(id) {
+  delete = (id) => {
     this.#items[id].element.remove();
     delete this.#items[id];
-  }
+  };
 
   changeFavorite = (id, isFavorite) => {
     this.#items[id].routePoint.favoriteButton.state = isFavorite;
   };
 
-  showErrors(errors) {
+  showErrors = (errors) => {
     if ('status' in errors[0]){
       const errorsStr = Array.from(errors, (err) =>
         `${PromptTexts.error.replace(ENDPOINT, err.endpoint)} ${err.status}, ${err.statusText}`
@@ -95,5 +95,5 @@ export default class MainView {
     else{
       this.#prompt.element.textContent = errors[0];
     }
-  }
+  };
 }

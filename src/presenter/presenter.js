@@ -29,7 +29,7 @@ export default class Presenter {
   start = () => {
     this.#model.init(() => {
       this.#index.sort = this.#model.points.length === 0;
-      this.#index.init(this.addFormShow);
+      this.#index.start(this.showAddForm);
       this.#recalculate();
       this.#list.onSubmit = this.onSubmit;
       this.#list.onChangeFavorite = this.onChangeFavorite;
@@ -37,19 +37,23 @@ export default class Presenter {
       this.#list.onCancel = () => this.onCloseAddForm();
       this.#list.onChangeState = this.#onChangeListState;
       this.#sort.onChange = this.onSort;
-      this.#filter.init();
+      this.#filter.start();
     }, (errors) => {
       this.#list.view.showErrors(errors);
     });
   };
 
-  addFormShow = () => {
+  showAddForm = () => {
     let needSort = this.#sort.reset();
     needSort = needSort && !this.#filter.reset();
     if (needSort) {
       this.#list.sort(this.#sort.currentMode);
     }
-    this.#list.newEvent();
+    this.#list.createNewEvent();
+  };
+
+  #onChangeListState = (emptyList) => {
+    this.#index.sort = emptyList;
   };
 
   #onChangeFilter = (mode) => {
@@ -82,10 +86,6 @@ export default class Presenter {
       this.#blockInterface(false);
       this.#list.hideForm();
     }
-  };
-
-  #onChangeListState = (emptyList) => {
-    this.#index.sort = emptyList;
   };
 
   #blockInterface = (block) => {

@@ -20,7 +20,7 @@ export default class Model {
     this.#rest = rest;
     this.#points = new Points();
     this.#destinations = new Destinations();
-    this.#info = new TripInfo();
+    this.#info = new TripInfo(this);
     this.#filters = new FiltersModel();
     this.#load = new LoadData(this, rest);
   }
@@ -60,27 +60,27 @@ export default class Model {
   getPoint = (id) => id > -1 ? this.#points.findID(id) : new Point();
 
   post = (point, onAdd, onError) => {
-    this.#rest.POST(point.forAddPoint, (response) => {
+    this.#rest.POST(point.forPOST, (response) => {
       point.id = parseInt(response.id, 10);
       this.#points.add(point);
       point.recalculate(this);
-      this.#info.afterAdd(point);
+      this.#info.doAfterAdding(point);
       onAdd({point: point});
     }, onError);
   };
 
   put = (point, onAlter, onError) => {
     const pointModel = this.getPoint(point.id);
-    if (pointModel.equal(point)) {
+    if (pointModel.isEqual(point)) {
       return true;
     }
     this.#rest.PUT(point, () => {
-      const alter = pointModel.alter(point);
-      if (alter.includes(FormFields.PRICE) || alter.includes(FormFields.OFFERS)) {
-        point.recalculate(this);
+      const changes = pointModel.alter(point);
+      if (changes.includes(FormFields.PRICE) || changes.includes(FormFields.OFFERS)) {
+        pointModel.recalculate(this);
       }
-      this.#info.afterAlter(point, alter, point.pricePoint - pointModel.pricePoint);
-      onAlter({point: pointModel, alter: alter});
+      this.#info.doAfterAlterations(point, changes, point.fullPrice - pointModel.fullPrice);
+      onAlter({point: pointModel, changes: changes});
     }, onError);
   };
 
@@ -98,7 +98,7 @@ export default class Model {
     const id = point.id;
     this.#rest.DELETE(id, () => {
       this.#points.delete(id);
-      this.#info.afterDelete(point);
+      this.#info.doAfterDeleting(point);
       onDelete({id: id});
     }, onError);
   };

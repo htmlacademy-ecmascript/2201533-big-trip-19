@@ -37,10 +37,10 @@ export default class SortItem extends AbstractTrickyView{
     const id = `${this.#ID_PREF}${item.name}`;
     this.#input = new SortItemInput(item, id);
     const label = new SortItemLabel(item, id);
-    this._createElement(label, item.name);
+    this.init(label, item.name);
   }
 
-  _createElement = (label, name) => {
+  init = (label, name) => {
     super._createElement();
     this.element.classList.add(`${this.#CLASS_PREF}${name}`);
     this.element.append(this.#input.element);

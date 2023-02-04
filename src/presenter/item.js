@@ -8,6 +8,10 @@ export default class Item {
     this._view = new ItemView();
   }
 
+  get element() {
+    return this._view.element;
+  }
+
   prepareForm(newOwner) {
     if (this._form.owner && this._form.owner !== newOwner) {
       this._form.owner.hideForm();
@@ -20,11 +24,12 @@ export default class Item {
     this._form.cancel = this.cancel;
   }
 
-  cancel = () => {};
+  cancel = () => {
+    throw new Error('Abstract method not implemented: cancel');
+  };
 
-  submit = () => {};
+  submit = () => {
+    throw new Error('Abstract method not implemented: submit');
+  };
 
-  get element() {
-    return this._view.element;
-  }
 }

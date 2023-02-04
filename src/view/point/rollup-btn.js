@@ -21,11 +21,11 @@ export default class RollupButton extends AbstractView{
     this.#onRollUp = onRollUp;
   }
 
-  render(parent) {
+  render = (parent) => {
     parent.append(this.element);
-  }
+  };
 
-  remove() {
+  remove = () => {
     this.element.remove();
-  }
+  };
 }

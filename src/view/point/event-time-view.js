@@ -56,14 +56,16 @@ export default class BlockTime extends AbstractTrickyView {
   #start;
   #end;
   #duration;
+
   constructor() {
     super();
     this.#start = new DateFrom();
     this.#end = new DateTo();
     this.#duration = new Duration();
+    this.init();
   }
 
-  _createElement = () => {
+  init = () => {
     super._createElement();
     const container = createElement('<p class="event__time">&mdash;</p>');
     container.append(this.#end.element);

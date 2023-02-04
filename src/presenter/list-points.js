@@ -11,10 +11,10 @@ export default class ListPoints {
   #points;
   #itemNewPoint;
   #form;
-  onFormSubmit;
   #onChangeState;
-  onChangeFavorite;
   #listView;
+  onFormSubmit;
+  onChangeFavorite;
 
   constructor() {
     this.#listView = new MainView();
@@ -25,7 +25,7 @@ export default class ListPoints {
     this.#model = model;
     this.#form = new EditFormView(this.#model.types, this.#model.destinations, this.#model.typeOfOffers);
     this.#model.points.list.forEach((point) => {
-      this.#newItem(point);
+      this.#createNewItem(point);
     });
     this.#itemNewPoint = new ItemNewForm(this.#form);
     this.#itemNewPoint.list = this.#listView.list;
@@ -62,10 +62,22 @@ export default class ListPoints {
     this.#form.shake();
   };
 
-  newEvent = () => {
+  createNewEvent = () => {
     this.#itemNewPoint.point = new Point();
     this.#itemNewPoint.showForm();
     this.#setElement();
+  };
+
+  #createNewItem = (point) => {
+    const item = new ItemRollup(
+      this.#form,
+      point,
+      this.#model.destinations[point.destination].name,
+      point.offers.length > 0 ? this.#model.getOffers(point.type, point.offers) : false,
+      this.onFormSubmit,
+      this.onChangeFavorite
+    );
+    this.#listView.new = item;
   };
 
   #fillList = () => {
@@ -102,22 +114,10 @@ export default class ListPoints {
     }
   };
 
-  #newItem = (point) => {
-    const item = new ItemRollup(
-      this.#form,
-      point,
-      this.#model.destinations[point.destination].name,
-      point.offers.length > 0 ? this.#model.getOffers(point.type, point.offers) : false,
-      this.onFormSubmit,
-      this.onChangeFavorite
-    );
-    this.#listView.new(item);
-  };
-
   addPoint = (options) => {
     const point = options.point;
     const index = this.#points.list.findIndex((elem) => elem.dateFrom > point.dateFrom);
-    this.#newItem(point);
+    this.#createNewItem(point);
     if (index > -1) {
       const beforeID = this.#points.list[index].id;
       this.#points.list.splice(index, 0, point);
@@ -132,22 +132,22 @@ export default class ListPoints {
 
   alterPoint = (options) => {
     const point = options.point;
-    const alter = options.alter;
+    const changes = options.changes;
     const destination = this.#model.destinations[point.destination].name;
-    const offers = alter.includes(FormFields.OFFERS) && point.offers.length > 0 ?
+    const offers = changes.includes(FormFields.OFFERS) && point.offers.length > 0 ?
       this.#model.getOffers(point.type, point.offers) : false;
-    if (alter.includes(FormFields.DATE_FROM) || alter.includes(FormFields.DATE_TO)) {
-      alter.push(FormFields.DURATION);
+    if (changes.includes(FormFields.DATE_FROM) || changes.includes(FormFields.DATE_TO)) {
+      changes.push(FormFields.DURATION);
     }
-    if (alter.includes(FormFields.DESTINATION) || alter.includes(FormFields.TYPE)) {
-      alter.push(FormFields.TITLE);
+    if (changes.includes(FormFields.DESTINATION) || changes.includes(FormFields.TYPE)) {
+      changes.push(FormFields.TITLE);
     }
-    const relocationOptions = this.#points.relocation(point, alter);
+    const relocationOptions = this.#points.relocation(point, changes);
     if (relocationOptions) {
       this.#listView.relocation(relocationOptions);
     }
     this.#form.owner.point = point;
-    this.#form.owner.routePoint.update(point, alter, destination, offers);
+    this.#form.owner.routePoint.update(point, changes, destination, offers);
     this.hideForm();
   };
 

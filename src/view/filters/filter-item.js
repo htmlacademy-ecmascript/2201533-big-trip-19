@@ -35,14 +35,14 @@ export default class FilterItem extends AbstractTrickyView {
     const id = `${this.#ID_PREF}${item.name}`;
     this.#input = new FilterItemInput(item, id);
     const label = new FilterItemLabel(item, id);
-    this._createElement(label);
+    this.init(label);
   }
 
-  _createElement(label) {
+  init = (label) => {
     super._createElement();
     this.element.append(this.#input.element);
     this.element.append(label.element);
-  }
+  };
 
   get input() {
     return this.#input;

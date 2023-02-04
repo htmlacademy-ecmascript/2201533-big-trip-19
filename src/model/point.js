@@ -2,51 +2,51 @@ import dayjs from 'dayjs';
 
 export default class Point {
   #fullPrice = 0;
-  basePrice;
+  basePrice = 0;
   dateFrom;
   dateTo;
-  destination = -1;
-  id = -1;
+  destination = null;
+  id = null;
   isFavorite = false;
   offers = [];
   type = '';
 
-  constructor(basePrice, dateFrom , dateTo, destination, id , isFavorite, offers, type) {
-    this.basePrice = basePrice || 0;
+  constructor(basePrice, dateFrom , dateTo, destination , id, isFavorite, offers, type) {
+    this.basePrice = basePrice || this.basePrice;
     this.dateFrom = dateFrom || dayjs();
     this.dateTo = dateTo || dayjs();
-    this.destination = destination;
-    this.id = id;
-    this.isFavorite = isFavorite || this.isFavorite;
-    this.offers = offers || this.offers;
-    this.type = type;
+    this.destination = destination || destination === 0 ? destination : this.destination;
+    this.id = id || id === 0 ? id : this.id;
+    this.isFavorite = isFavorite || false;
+    this.offers = offers || [];
+    this.type = type || '';
   }
 
   get entries() {
     return Object.entries(this).filter((value) => typeof(value[1]) !== 'function');
   }
 
-  get pricePoint() {
+  get fullPrice() {
     return this.#fullPrice;
   }
 
-  get forAddPoint() {
+  get forPOST() {
     const pointAsJson = {};
     this.entries.forEach(([key, value]) => {
       if (key !== 'id') {
-        pointAsJson[this.#newKey(key)] = value;
+        pointAsJson[this.#getNewKey(key)] = value;
       }
     });
     return pointAsJson;
   }
 
-  get forAlterPoint() {
+  get jsonForPUT() {
     const fields = [];
     this.entries.forEach(([key, value]) => {
       if (key === 'id') {
         fields.push(`"id": "${JSON.stringify(value)}"`);
       } else {
-        fields.push(`${JSON.stringify(this.#newKey(key))}: ${JSON.stringify(value)}`);
+        fields.push(`${JSON.stringify(this.#getNewKey(key))}: ${JSON.stringify(value)}`);
       }
     });
     return `{${fields.join(', ')}}`;
@@ -73,7 +73,7 @@ export default class Point {
     , this.basePrice);
   };
 
-  #newKey = (oldKey) => {
+  #getNewKey = (oldKey) => {
     let newKey = oldKey;
     [...newKey].forEach((char) => {
       if (char === char.toUpperCase()) {
@@ -83,7 +83,7 @@ export default class Point {
     return newKey;
   };
 
-  equalField = (point, key) => {
+  isEqualField = (point, key) => {
     if (key === 'offers') {
       if (point.offers.length !== this.offers.length) {
         return false;
@@ -93,23 +93,16 @@ export default class Point {
     return point[key] === this[key];
   };
 
-  equal = (point) => {
-    for (const key of Object.keys(this)) {
-      if (!this.equalField(point, key)) {
-        return false;
-      }
-    }
-    return true;
-  };
+  isEqual = (point) => Object.keys(this).every((key) => this.isEqualField(point, key));
 
   alter = (point) => {
-    const alter = [];
+    const changes = [];
     point.entries.forEach(([key, value]) => {
-      if (!this.equalField(point, key)) {
+      if (!this.isEqualField(point, key)) {
         this[key] = value;
-        alter.push(key);
+        changes.push(key);
       }
     });
-    return alter;
+    return changes;
   };
 }
