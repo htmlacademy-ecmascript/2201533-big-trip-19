@@ -98,5 +98,5 @@ export default class HeaderTypeView extends AbstractTrickyView {
       this.#iconType.src = Icons.DEFAULT;
       this.#type = '';
     }
-  }
+  };
 }
