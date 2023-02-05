@@ -25,6 +25,10 @@ class SortItemInput extends AbstractView{
   get template() {
     return '<input class="trip-sort__input  visually-hidden" type="radio" name="trip-sort">';
   }
+
+  set checked(check) {
+    this.element.checked = check;
+  }
 }
 
 export default class SortItem extends AbstractTrickyView{

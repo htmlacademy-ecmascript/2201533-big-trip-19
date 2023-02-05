@@ -67,10 +67,6 @@ export default class RoutePoint extends AbstractTrickyView{
       dateTo: () => {
         this.#timeBlock.end = point.dateTo;
       },
-      destination: () => {
-      },
-      isFavorite: () => {
-      },
       offers: () => {
         if (this.#offers) {
           this.#offers.element.remove();

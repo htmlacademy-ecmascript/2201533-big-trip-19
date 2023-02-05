@@ -1,5 +1,5 @@
 import {newPointFromJson} from './from-json';
-import {FILL_POINTS, FormFields} from '../settings';
+import {FILL_POINTS, FormFields, VIEW_EVENT_PRICE} from '../settings';
 
 export default class Points {
   #list = [];
@@ -36,7 +36,7 @@ export default class Points {
         diff = a.dateTo.diff(a.dateFrom) - b.dateTo.diff(b.dateFrom);
         break;
       case FormFields.PRICE:
-        diff = a.basePrice - b.basePrice;
+        diff = a[VIEW_EVENT_PRICE] - b[VIEW_EVENT_PRICE];
         break;
       case FormFields.DATE_FROM:
         diff = a.dateFrom.diff(b.dateFrom);
@@ -64,7 +64,7 @@ export default class Points {
   };
 
   relocation = (point, changes) => {
-    if (changes.includes(this.#sortMode.field))
+    if (changes.has(this.#sortMode.field))
     {
       const options = {};
       const deleteIndex = this.#list.findIndex((element) => element.id === point.id);

@@ -107,11 +107,11 @@ export default class TripInfo {
     }
   };
 
-  doAfterAlterations = (point, alter, delta) => {
-    if (alter.includes(FormFields.DATE_FROM) || alter.includes(FormFields.DATE_TO)) {
+  doAfterAlterations = (point, changes, delta) => {
+    if (changes.has(FormFields.DATE_FROM) || changes.has(FormFields.DATE_TO)) {
       this.#checkExtreme(point);
     }
-    if (alter.includes(FormFields.DESTINATION)) {
+    if (changes.has(FormFields.DESTINATION)) {
       this.#setUniqDestinations();
     }
     this.#fullPrice += delta;
