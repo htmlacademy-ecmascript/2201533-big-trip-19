@@ -10,7 +10,7 @@ export default class LoadData {
     this.#rest = rest;
   }
 
-  init = (onLoad, onError) => {
+  start = (onLoad, onError) => {
     this.#rest.GET(this)
       .then((response) => {
         if(response.every((value) => value)) {

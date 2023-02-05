@@ -3,9 +3,13 @@ import AbstractView from '../../framework/view/abstract-view';
 export default class FavoriteButton extends AbstractView{
   constructor(active, onChange) {
     super();
+    this.init(active, onChange);
+  }
+
+  init = (active, onChange) => {
     this.state = active;
     this.element.addEventListener('click', onChange);
-  }
+  };
 
   get template() {
     return `<button class="event__favorite-btn" type="button">

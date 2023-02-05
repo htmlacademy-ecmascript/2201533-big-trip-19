@@ -26,7 +26,7 @@ class DateTo extends AbstractView {
 }
 
 class Duration extends AbstractView {
-  #duration = (start, end) => {
+  #getDuration = (start, end) => {
     const duration = Math.floor(dayjs.duration(end.diff(start)).asMinutes());
     if (duration === 0) {
       return '0M';
@@ -48,7 +48,7 @@ class Duration extends AbstractView {
   }
 
   set duration(dates) {
-    this.element.textContent = this.#duration(dates.start, dates.end);
+    this.element.textContent = this.#getDuration(dates.start, dates.end);
   }
 }
 

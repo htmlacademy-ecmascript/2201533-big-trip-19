@@ -25,4 +25,4 @@ const getRandomString = () => {
   return String.fromCharCode.apply(null, codes);
 };
 
-export {getRandomString};
+export { getRandomString };

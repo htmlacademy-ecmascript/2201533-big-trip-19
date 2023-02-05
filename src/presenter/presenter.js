@@ -27,13 +27,13 @@ export default class Presenter {
   }
 
   start = () => {
-    this.#model.init(() => {
+    this.#model.start(() => {
       this.#index.sort = this.#model.points.length === 0;
       this.#index.start(this.showAddForm);
       this.#recalculate();
       this.#list.onSubmit = this.onSubmit;
       this.#list.onChangeFavorite = this.onChangeFavorite;
-      this.#list.init(this.#model);
+      this.#list.start(this.#model);
       this.#list.onCancel = () => this.onCloseAddForm();
       this.#list.onChangeState = this.#onChangeListState;
       this.#sort.onChange = this.onSort;

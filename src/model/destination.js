@@ -3,6 +3,7 @@ export default class Destination {
   description = '';
   name = '';
   pictures = [];
+
   constructor(id, description, name, pictures) {
     this.id = id || id === 0 ? id : this.id;
     this.description = description;

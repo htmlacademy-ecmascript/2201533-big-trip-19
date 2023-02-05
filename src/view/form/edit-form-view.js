@@ -57,6 +57,7 @@ export default class EditFormView extends AbstractTrickyView {
         this.#details.prepend(this.#sectionOffers.element);
       }
     },
+
     onChangeDestination: (destination) => {
       this.point.destination = destination.id;
       if (this.#sectionDestination) {
@@ -64,9 +65,11 @@ export default class EditFormView extends AbstractTrickyView {
       }
       this.#setSectionDestination(destination);
     },
+
     onChangeDate: (key, value) => {
       this.point[key] = value;
     },
+
     onChangePrice: (price) => {
       this.point.basePrice = price;
     }

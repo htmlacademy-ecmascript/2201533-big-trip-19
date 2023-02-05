@@ -47,25 +47,23 @@ export default class Points {
     return Math.round(diff / Math.abs(diff));
   };
 
-  fillJson(json) {
+  fillJson = (json) => {
     if (FILL_POINTS){
       json.forEach((point) => this.list.push(newPointFromJson(point)));
     }
-  }
+  };
 
-  delete(id) {
+  delete = (id) => {
     this.#list.splice(this.#list.findIndex((point) => point.id === id), 1);
-  }
+  };
 
-  findID(id) {
-    return this.#list.find((element) => element.id === id);
-  }
+  findID = (id) => this.#list.find((element) => element.id === id);
 
-  add(point) {
+  add = (point) => {
     this.#list.push(point);
-  }
+  };
 
-  relocation(point, changes){
+  relocation = (point, changes) => {
     if (changes.includes(this.#sortMode.field))
     {
       const options = {};
@@ -79,10 +77,10 @@ export default class Points {
       return options;
     }
     return false;
-  }
+  };
 
-  sort(options){
+  sort = (options) => {
     this.#sortMode = options;
     this.#list.sort((a, b) => this.#compare(a, b, options.field) * options.order);
-  }
+  };
 }

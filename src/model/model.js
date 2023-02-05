@@ -25,8 +25,8 @@ export default class Model {
     this.#load = new LoadData(this, rest);
   }
 
-  init = (onLoad, onError) => {
-    this.#load.init(onLoad, onError);
+  start = (onLoad, onError) => {
+    this.#load.start(onLoad, onError);
   };
 
   get destinations() {

@@ -21,7 +21,7 @@ export default class ListPoints {
     this.#listView.prompt = PromptTexts.loading;
   }
 
-  init = (model) => {
+  start = (model) => {
     this.#model = model;
     this.#form = new EditFormView(this.#model.types, this.#model.destinations, this.#model.typeOfOffers);
     this.#model.points.list.forEach((point) => {
