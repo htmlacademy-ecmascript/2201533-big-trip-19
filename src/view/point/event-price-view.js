@@ -9,20 +9,21 @@ class Price extends AbstractView {
 
 export default class PriceBlock extends AbstractTrickyView {
   #price;
+
   constructor() {
     super();
     this.#price = new Price();
     this._createElement();
   }
 
-  get template() {
-    return '<p class="event__price">&euro;&nbsp;</p>';
-  }
-
   _createElement = () => {
     super._createElement();
     this.element.append(this.#price.element);
   };
+
+  get template() {
+    return '<p class="event__price">&euro;&nbsp;</p>';
+  }
 
   set price(price) {
     this.#price.element.textContent = price;

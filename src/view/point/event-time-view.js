@@ -26,13 +26,19 @@ class DateTo extends AbstractView {
 }
 
 class Duration extends AbstractView {
-  #duration = (start, end) => {
-    let m = Math.floor(dayjs.duration(end.diff(start)).asMinutes());
+  #getDuration = (start, end) => {
+    const duration = Math.floor(dayjs.duration(end.diff(start)).asMinutes());
+    if (duration === 0) {
+      return '0M';
+    }
+    let m = Math.abs(duration);
+    const sign = duration / m === 1 ? '' : '-';
+
     const d = Math.floor(m / 60 / 24);
     m -= d * 24 * 60;
     const h = Math.floor(m / 60);
     m -= h * 60;
-    return `${(d > 0 ? `${d}D ` : '') +
+    return `${sign} ${(d > 0 ? `${d}D ` : '') +
       (h > 0 ? `${h.toString(10).padStart(2, '0')}H ` : '')
     }${m.toString().padStart(2, '0')}M`;
   };
@@ -42,7 +48,7 @@ class Duration extends AbstractView {
   }
 
   set duration(dates) {
-    this.element.textContent = this.#duration(dates.start, dates.end);
+    this.element.textContent = this.#getDuration(dates.start, dates.end);
   }
 }
 
@@ -50,14 +56,16 @@ export default class BlockTime extends AbstractTrickyView {
   #start;
   #end;
   #duration;
+
   constructor() {
     super();
     this.#start = new DateFrom();
     this.#end = new DateTo();
     this.#duration = new Duration();
+    this.init();
   }
 
-  _createElement = () => {
+  init = () => {
     super._createElement();
     const container = createElement('<p class="event__time">&mdash;</p>');
     container.append(this.#end.element);

@@ -48,7 +48,7 @@ export default class ItemRollup extends Item {
 
   hideForm = () => {
     this._form.owner = null;
-    this._form.default();
+    this._form.setDefault();
     this._view.replace(this.routePoint);
   };
 }

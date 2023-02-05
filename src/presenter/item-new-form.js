@@ -2,10 +2,10 @@ import Item from './item';
 import {SubmitMode} from '../settings';
 
 export default class ItemNewForm extends Item {
-  list;
   #point;
   #onSubmit;
   #onCancel;
+  list;
 
   constructor(form) {
     super(form);
@@ -27,8 +27,7 @@ export default class ItemNewForm extends Item {
   showForm = () => {
     super.prepareForm(this);
     super.showForm();
-    this._form.point = this.#point;
-    this._form.buttonCancel.textContent = 'Cancel';
+    this._form.initNew(this.#point);
     this.element.append(this._form.element);
     this.list.element.prepend(this.element);
   };
@@ -43,7 +42,7 @@ export default class ItemNewForm extends Item {
 
   hideForm = () => {
     this.element.remove();
-    this._form.default();
+    this._form.setDefault();
     this._form.owner = null;
     this.#onCancel();
   };

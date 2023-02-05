@@ -14,10 +14,10 @@ export default class Filters extends AbstractTrickyView {
   constructor(changeFilter) {
     super();
     this.#onChangeFilter = changeFilter;
-    this._createElement();
+    this.init();
   }
 
-  _createElement () {
+  init = () => {
     super._createElement();
     this.#ITEMS.forEach((item) => {
       const elem = new FilterItem(item);
@@ -34,12 +34,12 @@ export default class Filters extends AbstractTrickyView {
       this.#onChangeFilter(this.#currentFilter);
     });
     this.element.append(createElement('<button class="visually-hidden" type="submit">Accept filter</button>'));
-  }
+  };
 
-  init() {
+  start = () => {
     this.#defaultItem.checked = true;
     this.#onChangeFilter(this.#defaultFilter);
-  }
+  };
 
   get template() {
     return '<form class="trip-filters" action="#" method="get"></form>';

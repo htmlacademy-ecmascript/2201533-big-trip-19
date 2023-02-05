@@ -14,10 +14,10 @@ export default class Sorting extends AbstractTrickyView{
 
   constructor() {
     super();
-    this._createElement();
+    this.init();
   }
 
-  _createElement = () => {
+  init = () => {
     super._createElement();
     this.#ITEMS.forEach((item) => {
       const sortItem = new SortItem(item);
@@ -38,7 +38,7 @@ export default class Sorting extends AbstractTrickyView{
     });
   };
 
-  reset() {
+  reset = () => {
     if (this.#currentField === SortAttrs.DAY) {
       return false;
     }
@@ -46,26 +46,26 @@ export default class Sorting extends AbstractTrickyView{
     this.#currentOrder = this.#currentField.order;
     this.#defaultInput.checked = true;
     return true;
+  };
+
+  get currentMode() {
+    return {
+      field: this.#currentField.field,
+      order: this.#currentOrder
+    };
+  }
+
+  get template() {
+    return '<form class="trip-events__trip-sort  trip-sort" action="#" method="get"></form>';
   }
 
   set onChange(onChange) {
     this.#onChange = onChange;
   }
 
-  get currentMode() {
-    return {
-      field: this.#currentField,
-      order: this.#currentOrder
-    };
-  }
-
   set disabled(disabled) {
     this.#ITEMS.forEach((item, index) => {
       this.#inputs[index].disabled = disabled || item.disabled;
     });
-  }
-
-  get template() {
-    return '<form class="trip-events__trip-sort  trip-sort" action="#" method="get"></form>';
   }
 }

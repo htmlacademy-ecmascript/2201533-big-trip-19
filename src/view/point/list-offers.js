@@ -21,10 +21,10 @@ class Offer extends AbstractView {
 export default class ListOffers extends AbstractTrickyView {
   constructor(offers) {
     super();
-    this._createElement(offers);
+    this.init(offers);
   }
 
-  _createElement = (offers) => {
+  init = (offers) => {
     super._createElement();
     offers.forEach((offer) => {
       this.element.append(new Offer(offer).element);

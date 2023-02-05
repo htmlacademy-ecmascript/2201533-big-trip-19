@@ -2,7 +2,7 @@ import Offer from './offer';
 
 export default class LoadData {
   #model;
-  #loadErrors = [];
+  #loadingErrors = [];
   #rest;
 
   constructor(model, rest) {
@@ -10,36 +10,36 @@ export default class LoadData {
     this.#rest = rest;
   }
 
-  init = (onLoad, onError) => {
+  start = (onLoad, onError) => {
     this.#rest.GET(this)
       .then((response) => {
         if(response.every((value) => value)) {
-          this.#model.info.recalculate(this.#model);
+          this.#model.info.recalculate();
           onLoad();
         } else {
-          onError(this.#loadErrors);
+          onError(this.#loadingErrors);
         }
       })
       .catch((msg) => onError([msg]));
   };
 
-  points = (json) => {
-    this.#model.points.fillJson(json);
-    this.#model.info.init(this.#model);
-  };
+  set points(jsonListPoints) {
+    this.#model.points.fillJson(jsonListPoints);
+    this.#model.info.setParams();
+  }
 
-  destinations = (json) => {
-    this.#model.destinations.fillJson(json);
-  };
+  set destinations(jsonListDestinations) {
+    this.#model.destinations.fillJson(jsonListDestinations);
+  }
 
-  offers = (json) => {
-    json.forEach((type) => {
-      this.#model.typeOfOffers[type.type] =
-        Array.from(type.offers, (offer) => new Offer(offer.id, offer.title, offer.price));
+  set offers(jsonListTypeEvents) {
+    jsonListTypeEvents.forEach((list) => {
+      this.#model.typeOfOffers[list.type] =
+        Array.from(list.offers, (offer) => new Offer(offer.id, offer.title, offer.price));
     });
-  };
+  }
 
   addError = (msg) => {
-    this.#loadErrors.push(msg);
+    this.#loadingErrors.push(msg);
   };
 }

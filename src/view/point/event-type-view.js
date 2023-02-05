@@ -10,13 +10,14 @@ class TypeIcon extends AbstractView {
 
 export default class TypeBlock extends AbstractTrickyView {
   #icon;
+
   constructor() {
     super();
     this.#icon = new TypeIcon();
-    this._createElement();
+    this.init();
   }
 
-  _createElement = () => {
+  init = () => {
     super._createElement();
     this.element.append(this.#icon.element);
   };

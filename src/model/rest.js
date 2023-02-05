@@ -1,11 +1,11 @@
-import RandomString from './random-string.js';
+import {getRandomString} from './random-string.js';
 import {BASE_URL, ENDPOINTS, Endpoints} from '../settings';
 
 export default class Rest {
   #randomString;
 
   constructor() {
-    this.#randomString = new RandomString().value;
+    this.#randomString = getRandomString();
   }
 
   GET(loader) {
@@ -15,7 +15,7 @@ export default class Rest {
         Authorization: `Basic ${this.#randomString}`
       }
     };
-    const fetchers = Array.from(ENDPOINTS, (endpoint) => fetch(`${BASE_URL}${endpoint}`, init)
+    const fetchers = Array.from(ENDPOINTS, (endpoint) => fetch(`${BASE_URL}/${endpoint}`, init)
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -33,7 +33,7 @@ export default class Rest {
           loader.addError(response.error);
           return false;
         }
-        loader[endpoint](response);
+        loader[endpoint] = response;
         return true;
       })
       .catch((err) => {throw err;})
@@ -42,7 +42,7 @@ export default class Rest {
   }
 
   DELETE = (id, onSuccess, onError) => {
-    const url = `${BASE_URL}${Endpoints.POINTS}/${id}`;
+    const url = `${BASE_URL}/${Endpoints.POINTS}/${id}`;
     fetch(url, {
       method: 'DELETE',
       headers: {
@@ -61,14 +61,14 @@ export default class Rest {
   };
 
   PUT = (point, onSuccess, onError) => {
-    const url = `${BASE_URL}${Endpoints.POINTS}/${point.id}`;
+    const url = `${BASE_URL}/${Endpoints.POINTS}/${point.id}`;
     fetch(url, {
       method: 'PUT',
       headers: {
         Authorization: `Basic ${this.#randomString}`,
         'Content-Type': 'application/json; charset=utf-8'
       },
-      body: point.forAlterPoint
+      body: point.jsonForPUT
     })
       .then((response) => {
         if (response.ok) {
@@ -82,7 +82,7 @@ export default class Rest {
   };
 
   POST = (point, onSuccess, onError) => {
-    const url = `${BASE_URL}${Endpoints.POINTS}`;
+    const url = `${BASE_URL}/${Endpoints.POINTS}`;
     fetch(url, {
       method: 'POST',
       headers: {

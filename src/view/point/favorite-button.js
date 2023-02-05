@@ -3,18 +3,13 @@ import AbstractView from '../../framework/view/abstract-view';
 export default class FavoriteButton extends AbstractView{
   constructor(active, onChange) {
     super();
-    this.state = active;
-    this.element.addEventListener('click', onChange);
+    this.init(active, onChange);
   }
 
-  set state(active) {
-    if (active) {
-      this.element.classList.add('event__favorite-btn--active');
-    } else {
-      this.element.classList.remove('event__favorite-btn--active');
-    }
-    this.element.replaceWith(this.element);
-  }
+  init = (active, onChange) => {
+    this.state = active;
+    this.element.addEventListener('click', onChange);
+  };
 
   get template() {
     return `<button class="event__favorite-btn" type="button">
@@ -24,5 +19,14 @@ export default class FavoriteButton extends AbstractView{
         d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
     </svg>
   </button>`;
+  }
+
+  set state(active) {
+    if (active) {
+      this.element.classList.add('event__favorite-btn--active');
+    } else {
+      this.element.classList.remove('event__favorite-btn--active');
+    }
+    this.element.replaceWith(this.element);
   }
 }
