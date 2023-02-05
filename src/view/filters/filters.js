@@ -58,7 +58,6 @@ export default class Filters extends AbstractTrickyView {
   }
 
   reset = () => {
-    console.log('filter reset');
     if (this.#currentFilter === this.#defaultFilter) {
       return false;
     }
