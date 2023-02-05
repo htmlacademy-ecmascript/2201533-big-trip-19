@@ -58,6 +58,7 @@ export default class Presenter {
 
   #onChangeFilter = (mode) => {
     this.#filterMode = mode;
+    this.#sort.reset();
     this.#list.filterPoints(this.#filterMode, this.#sort.currentMode);
   };
 

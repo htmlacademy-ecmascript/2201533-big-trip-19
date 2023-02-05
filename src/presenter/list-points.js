@@ -69,7 +69,7 @@ export default class ListPoints {
   };
 
   #createNewItem = (point) => {
-    const item = new ItemRollup(
+    this.#listView.new = new ItemRollup(
       this.#form,
       point,
       this.#model.destinations[point.destination].name,
@@ -77,7 +77,6 @@ export default class ListPoints {
       this.onFormSubmit,
       this.onChangeFavorite
     );
-    this.#listView.new = item;
   };
 
   #fillList = () => {

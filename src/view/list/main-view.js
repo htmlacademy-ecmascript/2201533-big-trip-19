@@ -69,7 +69,7 @@ export default class MainView {
   relocation = (relocationOptions) => {
     const item = this.#items[relocationOptions.delete].element;
     item.remove();
-    if (relocationOptions.before) {
+    if (relocationOptions.before > -1) {
       this.#list.element.insertBefore(item, this.#items[relocationOptions.before].element);
     } else {
       this.#list.element.append(item);
