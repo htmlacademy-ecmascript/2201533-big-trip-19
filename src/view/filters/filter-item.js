@@ -24,6 +24,10 @@ class FilterItemInput extends AbstractView {
   get template() {
     return '<input class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter">';
   }
+
+  set checked(check) {
+    this.element.checked = check;
+  }
 }
 
 export default class FilterItem extends AbstractTrickyView {

@@ -44,10 +44,8 @@ export default class Presenter {
   };
 
   showAddForm = () => {
-    let needSort = this.#sort.reset();
-    needSort = needSort && !this.#filter.reset();
-    if (needSort) {
-      this.#list.sort(this.#sort.currentMode);
+    if(!this.#filter.reset()) {
+      this.#sort.reset();
     }
     this.#list.createNewEvent();
   };

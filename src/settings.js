@@ -104,7 +104,7 @@ const MIN_DURATION = {
   years: 0
 };
 
-const VIEW_EVENT_PRICE = FormFields.FULL_PRICE;
+const VIEW_EVENT_PRICE = FormFields.PRICE;
 
 const LengthRandomString = {
   MIN: 5,

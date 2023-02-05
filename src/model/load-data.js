@@ -10,19 +10,6 @@ export default class LoadData {
     this.#rest = rest;
   }
 
-  start = (onLoad, onError) => {
-    this.#rest.GET(this)
-      .then((response) => {
-        if(response.every((value) => value)) {
-          this.#model.info.recalculate();
-          onLoad();
-        } else {
-          onError(this.#loadingErrors);
-        }
-      })
-      .catch((msg) => onError([msg]));
-  };
-
   set points(jsonListPoints) {
     this.#model.points.fillJson(jsonListPoints);
     this.#model.info.setParams();
@@ -38,6 +25,19 @@ export default class LoadData {
         Array.from(list.offers, (offer) => new Offer(offer.id, offer.title, offer.price));
     });
   }
+
+  start = (onLoad, onError) => {
+    this.#rest.getData(this)
+      .then((response) => {
+        if(response.every((value) => value)) {
+          this.#model.info.recalculate();
+          onLoad();
+        } else {
+          onError(this.#loadingErrors);
+        }
+      })
+      .catch((msg) => onError([msg]));
+  };
 
   addError = (msg) => {
     this.#loadingErrors.push(msg);
