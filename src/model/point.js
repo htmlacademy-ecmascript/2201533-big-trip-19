@@ -96,11 +96,11 @@ export default class Point {
   isEqual = (point) => Object.keys(this).every((key) => this.isEqualField(point, key));
 
   alter = (point) => {
-    const changes = [];
+    const changes = new Set();
     point.entries.forEach(([key, value]) => {
       if (!this.isEqualField(point, key)) {
         this[key] = value;
-        changes.push(key);
+        changes.add(key);
       }
     });
     return changes;

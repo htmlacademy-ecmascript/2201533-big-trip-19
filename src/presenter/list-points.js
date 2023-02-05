@@ -1,6 +1,6 @@
 import EditFormView from '../view/form/edit-form-view.js';
 import dayjs from 'dayjs';
-import {FormFields, PromptTexts, ViewMode} from '../settings';
+import {FormFields, PromptTexts, VIEW_EVENT_PRICE, ViewMode} from '../settings';
 import ItemRollup from './item-rollup';
 import Point from '../model/point';
 import ItemNewForm from './item-new-form';
@@ -133,20 +133,24 @@ export default class ListPoints {
     const point = options.point;
     const changes = options.changes;
     const destination = this.#model.destinations[point.destination].name;
-    const offers = changes.includes(FormFields.OFFERS) && point.offers.length > 0 ?
+    const offers = changes.has(FormFields.OFFERS) && point.offers.length > 0 ?
       this.#model.getOffers(point.type, point.offers) : false;
-    if (changes.includes(FormFields.DATE_FROM) || changes.includes(FormFields.DATE_TO)) {
-      changes.push(FormFields.DURATION);
+    if (changes.has(FormFields.DATE_FROM) || changes.has(FormFields.DATE_TO)) {
+      changes.add(FormFields.DURATION);
     }
-    if (changes.includes(FormFields.DESTINATION) || changes.includes(FormFields.TYPE)) {
-      changes.push(FormFields.TITLE);
+    if (changes.has(FormFields.DESTINATION) || changes.has(FormFields.TYPE)) {
+      changes.delete(FormFields.DESTINATION);
+      changes.add(FormFields.TITLE);
+    }
+    this.#form.owner.point = point;
+    this.#form.owner.routePoint.update(point, changes, destination, offers);
+    if (changes.has(FormFields.OFFERS) && (VIEW_EVENT_PRICE === FormFields.FULL_PRICE)) {
+      changes.add(FormFields.PRICE);
     }
     const relocationOptions = this.#points.relocation(point, changes);
     if (relocationOptions) {
       this.#listView.relocation(relocationOptions);
     }
-    this.#form.owner.point = point;
-    this.#form.owner.routePoint.update(point, changes, destination, offers);
     this.hideForm();
   };
 

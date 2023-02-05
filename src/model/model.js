@@ -76,7 +76,7 @@ export default class Model {
     }
     this.#rest.PUT(point, () => {
       const changes = pointModel.alter(point);
-      if (changes.includes(FormFields.PRICE) || changes.includes(FormFields.OFFERS)) {
+      if (changes.has(FormFields.PRICE) || changes.has(FormFields.OFFERS)) {
         pointModel.recalculate(this);
       }
       this.#info.doAfterAlterations(point, changes, point.fullPrice - pointModel.fullPrice);

@@ -80,7 +80,8 @@ export default class Presenter {
       this.#blockInterface(false);
       this.#recalculate();
       onSuccess(options);
-    }, () => {
+    }, (msg) => {
+      console.log(msg);
       this.#blockInterface(false);
       onError();
     })) {

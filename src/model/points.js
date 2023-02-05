@@ -64,7 +64,7 @@ export default class Points {
   };
 
   relocation = (point, changes) => {
-    if (changes.includes(this.#sortMode.field))
+    if (changes.has(this.#sortMode.field))
     {
       const options = {};
       const deleteIndex = this.#list.findIndex((element) => element.id === point.id);
