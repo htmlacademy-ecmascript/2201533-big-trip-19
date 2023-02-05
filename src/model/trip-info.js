@@ -51,6 +51,13 @@ export default class TripInfo {
     this.#setUniqDestinations();
   };
 
+  recalculate = () => {
+    this.#points.list.forEach((point) => {
+      point.recalculate(this.#model);
+      this.#fullPrice += point.fullPrice;
+    });
+  };
+
   #setStartPoint = () => {
     this.#startPoint = this.#points.start;
   };
@@ -61,13 +68,6 @@ export default class TripInfo {
 
   #setUniqDestinations = () => {
     this.#uniqDestinations = new Set(Array.from(this.#points.list, (point) => point.destination));
-  };
-
-  recalculate = () => {
-    this.#points.list.forEach((point) => {
-      point.recalculate(this.#model);
-      this.#fullPrice += point.fullPrice;
-    });
   };
 
   #checkExtreme = (point) => {

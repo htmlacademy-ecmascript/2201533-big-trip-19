@@ -23,6 +23,27 @@ export default class EditFormView extends AbstractTrickyView {
     this.init();
   }
 
+  get buttonCancel() {
+    return this.#header.buttonCancel;
+  }
+
+  get buttonSubmit() {
+    return this.#header.buttonSubmit;
+  }
+
+  get template() {
+    return `<form class="event event--edit" action="#" method="post">
+              <section class="event__details"></section>
+            </form>`;
+  }
+
+  set disabled(disabled) {
+    this.#header.disabled = disabled;
+    if (this.#sectionOffers) {
+      this.#sectionOffers.disabled = disabled;
+    }
+  }
+
   init = () => {
     super._createElement();
     this.#isNew = false;
@@ -43,6 +64,30 @@ export default class EditFormView extends AbstractTrickyView {
     this.point = point;
     this.#header.initNew();
     this.buttonCancel.textContent = 'Cancel';
+  };
+
+  update = (point, onRollUp) => {
+    this.point = point;
+    const destination = this.#destinations[point.destination];
+    this.#header.update(point, onRollUp);
+    this.#setSectionOffers();
+    if (this.#sectionOffers) {
+      this.#details.append(this.#sectionOffers.element);
+    }
+    this.#setSectionDestination(destination);
+  };
+
+  setDefault = () => {
+    this.#isNew = false;
+    if (this.#sectionOffers) {
+      this.#sectionOffers.element.remove();
+      this.#sectionOffers = false;
+    }
+    if (this.#sectionDestination) {
+      this.#sectionDestination.element.remove();
+      this.#sectionDestination = false;
+    }
+    this.#header.setDefault();
   };
 
   #callbacks = {
@@ -75,30 +120,6 @@ export default class EditFormView extends AbstractTrickyView {
     }
   };
 
-  update = (point, onRollUp) => {
-    this.point = point;
-    const destination = this.#destinations[point.destination];
-    this.#header.update(point, onRollUp);
-    this.#setSectionOffers();
-    if (this.#sectionOffers) {
-      this.#details.append(this.#sectionOffers.element);
-    }
-    this.#setSectionDestination(destination);
-  };
-
-  setDefault = () => {
-    this.#isNew = false;
-    if (this.#sectionOffers) {
-      this.#sectionOffers.element.remove();
-      this.#sectionOffers = false;
-    }
-    if (this.#sectionDestination) {
-      this.#sectionDestination.element.remove();
-      this.#sectionDestination = false;
-    }
-    this.#header.setDefault();
-  };
-
   #setSectionOffers = () => {
     this.#sectionOffers =
       this.point.type && this.#offers[this.point.type].length > 0 ?
@@ -112,25 +133,4 @@ export default class EditFormView extends AbstractTrickyView {
       this.#details.append(this.#sectionDestination.element);
     }
   };
-
-  get buttonCancel() {
-    return this.#header.buttonCancel;
-  }
-
-  get buttonSubmit() {
-    return this.#header.buttonSubmit;
-  }
-
-  get template() {
-    return `<form class="event event--edit" action="#" method="post">
-              <section class="event__details"></section>
-            </form>`;
-  }
-
-  set disabled(disabled) {
-    this.#header.disabled = disabled;
-    if (this.#sectionOffers) {
-      this.#sectionOffers.disabled = disabled;
-    }
-  }
 }

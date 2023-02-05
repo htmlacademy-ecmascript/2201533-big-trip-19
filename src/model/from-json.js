@@ -1,13 +1,7 @@
 import Point from './point';
 import dayjs from 'dayjs';
 import Destination from './destination';
-
-class Picture {
-  constructor(src, description) {
-    this.src = src;
-    this.description = description;
-  }
-}
+import Picture from './picture';
 
 const newPointFromJson = (json) => new Point(
   json.base_price,

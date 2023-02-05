@@ -5,8 +5,8 @@ export default class Point {
   basePrice = 0;
   dateFrom;
   dateTo;
-  destination = null;
-  id = null;
+  destination = -1;
+  id = -1;
   isFavorite = false;
   offers = [];
   type = '';

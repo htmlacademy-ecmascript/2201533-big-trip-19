@@ -1,12 +1,12 @@
 import {RenderPosition} from '../../framework/render';
 import RollupButton from './rollup-btn.js';
 import FavoriteButton from './favorite-button';
-import ListOffers from './list-offers';
+import ListOffers from './list-offers/list-offers';
 import AbstractTrickyView from '../abstract-tricky-view';
 import EventDate from './event-date-view';
-import TypeBlock from './event-type-view';
+import TypeBlock from './event-type-block/event-type-view';
 import EventTitle from './event-title-view';
-import BlockTime from './event-time-view';
+import BlockTime from './event-time-block/event-time-view';
 import PriceBlock from './event-price-view';
 import {VIEW_EVENT_PRICE} from '../../settings';
 

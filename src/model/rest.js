@@ -8,7 +8,7 @@ export default class Rest {
     this.#randomString = getRandomString();
   }
 
-  GET(loader) {
+  getData(loader) {
     const init = {
       method: 'GET',
       headers: {
@@ -41,7 +41,7 @@ export default class Rest {
     return Promise.all(fetchers);
   }
 
-  DELETE = (id, onSuccess, onError) => {
+  delete = (id, onSuccess, onError) => {
     const url = `${BASE_URL}/${Endpoints.POINTS}/${id}`;
     fetch(url, {
       method: 'DELETE',
@@ -60,7 +60,7 @@ export default class Rest {
       .catch((msg) => onError(msg));
   };
 
-  PUT = (point, onSuccess, onError) => {
+  put = (point, onSuccess, onError) => {
     const url = `${BASE_URL}/${Endpoints.POINTS}/${point.id}`;
     fetch(url, {
       method: 'PUT',
@@ -81,7 +81,7 @@ export default class Rest {
       .catch((msg) => onError(msg));
   };
 
-  POST = (point, onSuccess, onError) => {
+  post = (point, onSuccess, onError) => {
     const url = `${BASE_URL}/${Endpoints.POINTS}`;
     fetch(url, {
       method: 'POST',

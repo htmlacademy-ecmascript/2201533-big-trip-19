@@ -60,7 +60,7 @@ export default class Model {
   getPoint = (id) => id > -1 ? this.#points.findID(id) : new Point();
 
   post = (point, onAdd, onError) => {
-    this.#rest.POST(point.forPOST, (response) => {
+    this.#rest.post(point.forPOST, (response) => {
       point.id = parseInt(response.id, 10);
       this.#points.add(point);
       point.recalculate(this);
@@ -74,10 +74,10 @@ export default class Model {
     if (pointModel.isEqual(point)) {
       return true;
     }
-    this.#rest.PUT(point, () => {
+    this.#rest.put(point, () => {
       const changes = pointModel.alter(point);
       if (changes.has(FormFields.PRICE) || changes.has(FormFields.OFFERS)) {
-        pointModel.recalculate(this);
+        point.recalculate(this);
       }
       this.#info.doAfterAlterations(point, changes, point.fullPrice - pointModel.fullPrice);
       onAlter({point: pointModel, changes: changes});
@@ -87,7 +87,7 @@ export default class Model {
   changeFavorite = (point, onChange) => {
     const changedPoint = point.copy;
     changedPoint.isFavorite = !point.isFavorite;
-    this.#rest.PUT(changedPoint, () => {
+    this.#rest.put(changedPoint, () => {
       point.isFavorite = !point.isFavorite;
       onChange(point);
     }, () => {
@@ -96,7 +96,7 @@ export default class Model {
 
   deletePoint = (point, onDelete, onError) => {
     const id = point.id;
-    this.#rest.DELETE(id, () => {
+    this.#rest.delete(id, () => {
       this.#points.delete(id);
       this.#info.doAfterDeleting(point);
       onDelete({id: id});

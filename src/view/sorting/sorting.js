@@ -45,6 +45,7 @@ export default class Sorting extends AbstractTrickyView{
     this.#currentField = SortAttrs.DAY;
     this.#currentOrder = this.#currentField.order;
     this.#defaultInput.checked = true;
+    this.#onChange(this.currentMode);
     return true;
   };
 

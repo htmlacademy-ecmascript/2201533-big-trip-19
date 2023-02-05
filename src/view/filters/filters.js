@@ -61,7 +61,7 @@ export default class Filters extends AbstractTrickyView {
     if (this.#currentFilter === this.#defaultFilter) {
       return false;
     }
-    this.init();
+    this.start();
     return true;
   };
 }

@@ -21,18 +21,6 @@ export default class ListPoints {
     this.#listView.prompt = PromptTexts.loading;
   }
 
-  start = (model) => {
-    this.#model = model;
-    this.#form = new EditFormView(this.#model.types, this.#model.destinations, this.#model.typeOfOffers);
-    this.#model.points.list.forEach((point) => {
-      this.#createNewItem(point);
-    });
-    this.#itemNewPoint = new ItemNewForm(this.#form);
-    this.#itemNewPoint.list = this.#listView.list;
-    this.#itemNewPoint.onSubmit = this.onFormSubmit;
-    document.addEventListener('keydown', this.#onKeyDown);
-  };
-
   set onSubmit(onSubmit) {
     this.onFormSubmit = (mode, point, button) => {
       button.textContent = mode.directText;
@@ -58,8 +46,16 @@ export default class ListPoints {
     this.#onChangeState = onChangeState;
   }
 
-  #onError = () => {
-    this.#form.shake();
+  start = (model) => {
+    this.#model = model;
+    this.#form = new EditFormView(this.#model.types, this.#model.destinations, this.#model.typeOfOffers);
+    this.#model.points.list.forEach((point) => {
+      this.#createNewItem(point);
+    });
+    this.#itemNewPoint = new ItemNewForm(this.#form);
+    this.#itemNewPoint.list = this.#listView.list;
+    this.#itemNewPoint.onSubmit = this.onFormSubmit;
+    document.addEventListener('keydown', this.#onKeyDown);
   };
 
   createNewEvent = () => {
@@ -105,12 +101,6 @@ export default class ListPoints {
   sort = (options) => {
     this.#points.sort(options);
     this.#fillList();
-  };
-
-  #onKeyDown = (evt) => {
-    if (this.#form.owner && evt.key === 'Escape') {
-      this.#form.owner.hideForm();
-    }
   };
 
   addPoint = (options) => {
@@ -173,4 +163,14 @@ export default class ListPoints {
     this.#listView.disabled = block;
     this.#form.disabled = block;
   }
+
+  #onError = () => {
+    this.#form.shake();
+  };
+
+  #onKeyDown = (evt) => {
+    if (this.#form.owner && evt.key === 'Escape') {
+      this.#form.owner.hideForm();
+    }
+  };
 }
