@@ -30,6 +30,10 @@ export default class Point {
     return this.#fullPrice;
   }
 
+  set fullPrice(price) {
+    this.#fullPrice = price;
+  }
+
   get forPOST() {
     const pointAsJson = {};
     this.entries.forEach(([key, value]) => {
