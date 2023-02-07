@@ -30,7 +30,8 @@ const SortAttrs = {
   OFFER: {name: 'offer', title: 'Offer', disabled: true, order: Order.NOT}
 };
 
-const DIFF_CLICK = 1000;
+const DIFF_CLICK = 10000;
+const CHANGE_SORT_ORDER = false;
 
 const FilterAttrs = {
   EVERYTHING: {name: 'everything', title: 'Everything', checked: true},
@@ -114,6 +115,6 @@ const LengthRandomString = {
 export {
   Icons, Order, PromptTexts, SubmitMode, FilterAttrs, SortAttrs, BASE_URL, Endpoints,
   DIFF_CLICK, FormFields, ViewMode, ENDPOINT, FILL_POINTS, BLOCK_LIMITS, ENDPOINTS, MIN_DURATION,
-  VIEW_EVENT_PRICE, LengthRandomString
+  VIEW_EVENT_PRICE, LengthRandomString, CHANGE_SORT_ORDER
 };
 

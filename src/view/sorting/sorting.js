@@ -1,4 +1,4 @@
-import {DIFF_CLICK, SortAttrs} from '../../settings';
+import {CHANGE_SORT_ORDER, DIFF_CLICK, SortAttrs} from '../../settings';
 import dayjs from 'dayjs';
 import AbstractTrickyView from '../abstract-tricky-view';
 import SortItem from './sort-item';
@@ -23,13 +23,15 @@ export default class Sorting extends AbstractTrickyView{
       const sortItem = new SortItem(item);
       this.element.append(sortItem.element);
       sortItem.input.element.addEventListener('click', () => {
-        if (dayjs().diff(this.#lastClick) > DIFF_CLICK) {
-          this.#lastClick = dayjs();
-          this.#currentOrder =
-            item === this.#currentField ? this.#currentOrder * -1 : item.order;
-          this.#currentField = item;
-          this.#onChange(this.currentMode);
+        if((item === this.#currentField)) {
+          if(!CHANGE_SORT_ORDER || (CHANGE_SORT_ORDER && dayjs().diff(this.#lastClick) < DIFF_CLICK)) {
+            return;
+          }
         }
+        this.#lastClick = dayjs();
+        this.#currentOrder = item === this.#currentField ? this.#currentOrder * -1 : item.order;
+        this.#currentField = item;
+        this.#onChange(this.currentMode);
       });
       if (item.checked) {
         this.#defaultInput = sortItem.input;

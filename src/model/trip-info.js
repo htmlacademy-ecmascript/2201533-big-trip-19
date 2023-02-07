@@ -28,9 +28,12 @@ export default class TripInfo {
     const destinations = new Set(this.#uniqDestinations);
     destinations.delete(this.#startPoint.destination);
     destinations.delete(this.#endPoint.destination);
-    return `${this.#model.destinations[this.#startPoint.destination].name} — ${
-      destinations.size === 1 ? this.#model.destinations[destinations.values().next().value] : '. . .'} — ${
-      this.#model.destinations[this.#endPoint.destination].name}`;
+    return `${this.#model.destinations[this.#startPoint.destination].name} — ${(() => {
+      if (destinations.size === 0) {
+        return '';
+      }
+      return `${destinations.size === 1 ? this.#model.destinations[destinations.values().next().value].name : '. . .'} — `;
+    })()}${this.#model.destinations[this.#endPoint.destination].name}`;
   }
 
   get infoDate() {
